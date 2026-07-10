@@ -5,6 +5,7 @@ import { BottomTabsParamList } from '../../types/navigation';
 import CustomBottomTab from '../../components/organisms/custom-bottom-tab';
 import { colors } from '../../utils/colors';
 import HomeScreen from '../../screens/home';
+import CartScreen from '../../screens/cart';
 
 
 const Tab = createBottomTabNavigator<BottomTabsParamList>();
@@ -25,10 +26,6 @@ export default function BottomTabs() {
                 tabBarHideOnKeyboard: true,
                 tabBarIcon: ({ color, size }) => {
                     let iconName: string = 'home';
-
-                    if (route.name === 'HomeTab') {
-                        iconName = 'home-outline';
-                    }
                     return (
                         <Ionicons name={iconName} size={size} color={color} />
                     );
@@ -46,6 +43,16 @@ export default function BottomTabs() {
                         title: 'Inicio'
                     }}
 
+            />
+            <Tab.Screen
+                name='CartTab'
+                component={CartScreen}
+                options={
+                    {
+                        headerShown: false,
+                        // header: () => <CustomHeader />,
+                        title: 'Carrito'
+                    }}
             />
 
         </Tab.Navigator>

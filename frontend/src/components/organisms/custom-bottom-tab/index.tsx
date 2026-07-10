@@ -24,11 +24,23 @@ export default function CustomBottomTab({
           navigation.navigate(route.name as never);
         };
 
+        const handlerCase = (routeName: string) => {
+          switch (routeName) {
+            case 'HomeTab':
+              iconName = isFocused ? 'home' : 'home-outline';
+              break;
+            case 'CartTab':
+              iconName = isFocused ? 'cart' : 'cart-outline';
+              break;
+            default:
+              iconName = isFocused ? 'home' : 'home-outline';
+              break;
+          }
+        };
+
         let iconName: string = isFocused ? 'home' : 'home-outline';
 
-        if (route.name === 'Home') {
-          iconName = isFocused ? 'home' : 'home-outline';
-        }
+        handlerCase(route.name);
 
         return (
           <TouchableOpacity
@@ -38,13 +50,13 @@ export default function CustomBottomTab({
             <Ionicons
               name={iconName}
               size={24}
-              color={isFocused ? 'white' : colors.primary}
+              color={isFocused ? 'white' : colors.secondary}
             />
 
             <Text
               style={[
                 styles.tabName,
-                { color: isFocused ? 'white' : colors.primary },
+                { color: isFocused ? 'white' : colors.secondary },
               ]}>
               {label}
             </Text>

@@ -10,10 +10,12 @@ export type RootStackParamList = {
         navigation: NavigationProp<RootStackParamList>;
     };
     Home: undefined;
+    Cart: undefined;
 };
 
 export type BottomTabsParamList = {
     HomeTab: undefined;
+    CartTab: undefined;
 };
 
 export type CustomNavigationProps = CompositeNavigationProp<
