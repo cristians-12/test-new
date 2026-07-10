@@ -1,6 +1,6 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9 --activate
 
 WORKDIR /app
 
@@ -11,4 +11,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["pnpm", "run", "start:dev"]
+CMD ["pnpm", "exec", "nest", "start", "--watch"]
