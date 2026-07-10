@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { store } from '../store/store';
 import AppContent from './AppContent';
-
 
 export default function App() {
     return (
-        <AppContent />
+        <Provider store={store}>
+            <AppContent />
+        </Provider>
     );
 }
