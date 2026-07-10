@@ -1,0 +1,58 @@
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { BottomTabsParamList } from '../../types/navigation';
+
+
+const Tab = createBottomTabNavigator<BottomTabsParamList>();
+
+export default function BottomTabs() {
+
+    return (
+        <Tab.Navigator
+            tabBar={(props) => <CustomBottomTab {...props} />}
+
+            screenOptions={({ route }) => ({
+                headerShown: false,
+                tabBarActiveTintColor: colors.primary,
+                tabBarInactiveTintColor: 'white',
+                tabBarStyle: {
+                    height: 60,
+                },
+                tabBarHideOnKeyboard: true,
+                tabBarIcon: ({ color, size }) => {
+                    let iconName: string = 'home';
+
+                    if (route.name === 'HomeTab') {
+                        iconName = 'home-outline';
+                    }
+                    return (
+                        <Ionicons name={iconName} size={size} color={color} />
+                    );
+                },
+            })}
+
+        >
+            <Tab.Screen
+                name="HomeTab"
+                component={HomeScreen}
+                options={{ headerShown: true, header: () => <CustomHeader />, title: 'Inicio' }}
+
+            />
+            <Tab.Screen
+                name="HistoryTab"
+                component={HistoryScreen}
+                options={{
+                    title: 'Clases',
+                    headerShown: true,
+                    headerStyle: {
+                        backgroundColor: userRole === AppRole.STUDENT ? colors.primary : colors.darkBlue,
+                    },
+                    headerTitleStyle: styles.titleStyle,
+                    headerTitleAlign: 'center',
+                }}
+            />
+
+        </Tab.Navigator>
+    );
+}
