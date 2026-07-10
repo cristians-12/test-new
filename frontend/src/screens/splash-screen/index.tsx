@@ -5,7 +5,7 @@ import SplashAnimation from '../../components/templates/splash-animation';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/navigation';
 
-type SplashProps = NativeStackScreenProps<RootStackParamList, 'SplashScreen'>;
+type SplashProps = NativeStackScreenProps<RootStackParamList, 'Splash'>;
 
 export default function SplashScreen({ navigation }: SplashProps) {
   useEffect(() => {
