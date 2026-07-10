@@ -22,18 +22,16 @@ const categories = [
 ];
 
 const products = [
-  { name: 'Laptop Gamer Pro', description: 'Laptop de 15.6" con RTX 4060, 16GB RAM', price: 4500000, stock: 15, categorySlug: 'electronica' },
-  { name: 'Mouse Inalámbrico', description: 'Mouse ergonómico con sensor óptico de 4000 DPI', price: 85000, stock: 50, categorySlug: 'electronica' },
-  { name: 'Auriculares Bluetooth', description: 'Auriculares con cancelación de ruido activa', price: 320000, stock: 30, categorySlug: 'electronica' },
+  {
+    name: 'Laptop Gamer Pro',
+    description: 'Laptop de 15.6" con RTX 4060, 16GB RAM',
+    price: 4500000, stock: 15, categorySlug: 'electronica',
+    image_url: 'https://imgs.search.brave.com/Vqgw9YX42ssUC9H0QwV0gKvjK0te8g4ECI1wUozx2_Q/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzliL2Y0/L2RlLzliZjRkZTQw/Yzc0ODcxMzBiNzQ3/N2Q4YjU0NGIyODYy/LmpwZw'
+  },
   { name: 'Camiseta Básica Algodón', description: 'Camiseta 100% algodón, varios colores', price: 45000, stock: 100, categorySlug: 'ropa' },
-  { name: 'Jeans Slim Fit', description: 'Jeans de mezclilla azul slim fit', price: 180000, stock: 40, categorySlug: 'ropa' },
-  { name: 'Chaqueta Impermeable', description: 'Chaqueta outdoor impermeable con capucha', price: 350000, stock: 20, categorySlug: 'ropa' },
   { name: 'Lámpara de Escritorio LED', description: 'Lámpara LED con 3 niveles de intensidad', price: 120000, stock: 25, categorySlug: 'hogar' },
-  { name: 'Juego de Sábanas', description: 'Sábanas de microfibra, tamaño queen', price: 95000, stock: 35, categorySlug: 'hogar' },
   { name: 'Balón de Fútbol', description: 'Balón oficial tamaño 5, material sintético', price: 75000, stock: 60, categorySlug: 'deportes' },
-  { name: 'Mancuernas Ajustables', description: 'Par de mancuernas ajustables de 20kg', price: 280000, stock: 18, categorySlug: 'deportes' },
   { name: 'Café Especial Colombia', description: 'Café en grano 100% arábica, tueste medio', price: 55000, stock: 80, categorySlug: 'alimentos' },
-  { name: 'Aceite de Oliva Extra Virgen', description: 'Aceite de oliva prensado en frío 500ml', price: 42000, stock: 45, categorySlug: 'alimentos' },
 ];
 
 async function seed() {
