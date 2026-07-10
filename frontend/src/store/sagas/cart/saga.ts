@@ -1,10 +1,10 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { api } from '../../../services';
 import { syncCartFailure, syncCartRequest, syncCartSuccess } from './reducer';
+import apiClient from '../../../api/api';
 
 function* syncCartSaga(): Generator<any, void, any> {
   try {
-    const response = yield call([api, 'get'], '/cart');
+    const response: any = yield call([apiClient, 'get'], '/cart');
     yield put(syncCartSuccess(response.data));
   } catch (error: any) {
     yield put(syncCartFailure(error.message || 'Error al sincronizar el carrito'));
