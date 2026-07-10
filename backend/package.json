@@ -79,6 +79,7 @@
       "!**/app.module.ts",
       "!**/products.module.ts",
       "!**/categories.module.ts",
+      "!**/payments.module.ts",
       "!**/seed.ts"
     ],
     "coverageDirectory": "../coverage",
