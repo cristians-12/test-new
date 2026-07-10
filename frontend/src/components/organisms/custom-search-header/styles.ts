@@ -5,7 +5,7 @@ import { fontFamilies } from "../../../utils/fonts";
 export const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.primary,
-        padding: 10,
+        padding: 15,
     },
     text: {
         color: 'white',

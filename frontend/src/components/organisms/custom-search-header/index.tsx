@@ -7,7 +7,7 @@ import { colors } from '../../../utils/colors';
 export default function CustomSearchHeader() {
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Bienvenido</Text>
+            <Text style={[styles.text, { fontSize: 20 }]}>Bienvenido</Text>
             <View style={styles.inputWrapper}>
                 <TextInput
                     style={styles.input}
