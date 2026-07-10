@@ -1,2 +1,1 @@
-export { typography } from './typography';
-
+export { fontFamilies } from './typography';

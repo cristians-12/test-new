@@ -4,6 +4,7 @@ import HomeScreen from '../screens/home';
 import SplashScreen from '../screens/splash-screen';
 import { RootStackParamList } from '../types/navigation';
 import { colors } from '../utils/colors';
+import BottomTabs from './bottom-tabs';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -17,9 +18,9 @@ export default function RootStack() {
       />
       <Stack.Screen
         name="Home"
-        component={HomeScreen}
+        component={BottomTabs}
         options={{
-          headerStyle: { backgroundColor: colors.primary }
+          headerShown: false,
         }} />
     </Stack.Navigator>
   );

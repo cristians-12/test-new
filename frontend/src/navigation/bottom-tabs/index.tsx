@@ -2,6 +2,9 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { BottomTabsParamList } from '../../types/navigation';
+import CustomBottomTab from '../../components/organisms/custom-bottom-tab';
+import { colors } from '../../utils/colors';
+import HomeScreen from '../../screens/home';
 
 
 const Tab = createBottomTabNavigator<BottomTabsParamList>();
@@ -36,21 +39,13 @@ export default function BottomTabs() {
             <Tab.Screen
                 name="HomeTab"
                 component={HomeScreen}
-                options={{ headerShown: true, header: () => <CustomHeader />, title: 'Inicio' }}
+                options={
+                    {
+                        headerShown: true,
+                        // header: () => <CustomHeader />,
+                        title: 'Inicio'
+                    }}
 
-            />
-            <Tab.Screen
-                name="HistoryTab"
-                component={HistoryScreen}
-                options={{
-                    title: 'Clases',
-                    headerShown: true,
-                    headerStyle: {
-                        backgroundColor: userRole === AppRole.STUDENT ? colors.primary : colors.darkBlue,
-                    },
-                    headerTitleStyle: styles.titleStyle,
-                    headerTitleAlign: 'center',
-                }}
             />
 
         </Tab.Navigator>

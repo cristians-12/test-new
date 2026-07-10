@@ -24,10 +24,10 @@ export default function CustomBottomTab({
           navigation.navigate(route.name as never);
         };
 
-        let iconName: string = isFocused ? 'home' : 'home-outline';
+        let iconName: string = isFocused ? 'time' : 'time-outline';
 
-        if (route.name === 'HistoryTab') {
-          iconName = isFocused ? 'time' : 'time-outline';
+        if (route.name === 'Home') {
+          iconName = isFocused ? 'home' : 'home-outline';
         }
 
         return (
@@ -38,13 +38,13 @@ export default function CustomBottomTab({
             <Ionicons
               name={iconName}
               size={24}
-              color={isFocused ? colors.primary : 'white'}
+              color={isFocused ? 'white' : colors.primary}
             />
 
             <Text
               style={[
                 styles.tabName,
-                { color: isFocused ? colors.primary : 'white' },
+                { color: isFocused ? 'white' : colors.primary },
               ]}>
               {label}
             </Text>
