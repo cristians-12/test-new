@@ -6,6 +6,7 @@ import CustomBottomTab from '../../components/organisms/custom-bottom-tab';
 import { colors } from '../../utils/colors';
 import HomeScreen from '../../screens/home';
 import CartScreen from '../../screens/cart';
+import { styles } from './style';
 
 
 const Tab = createBottomTabNavigator<BottomTabsParamList>();
@@ -49,9 +50,12 @@ export default function BottomTabs() {
                 component={CartScreen}
                 options={
                     {
-                        headerShown: false,
+                        headerShown: true,
                         // header: () => <CustomHeader />,
-                        title: 'Carrito'
+                        title: 'Carrito',
+                        headerStyle: styles.headerStyle,
+                        headerTitleStyle: styles.titleStyle2
+
                     }}
             />
 
