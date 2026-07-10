@@ -3,13 +3,9 @@ import { Image, Text, View } from 'react-native';
 import { styles } from './styles';
 
 
-type SplashAnimationProps = {
-    finishedAnimation: () => void
-}
 
-export default function SplashAnimation({
-    finishedAnimation,
-}: SplashAnimationProps) {
+
+export default function SplashAnimation() {
     return (
         <View style={styles.container}>
         </View>
