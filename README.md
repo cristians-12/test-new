@@ -25,7 +25,7 @@ A full-stack monorepo containing a React Native mobile app (frontend) and a Nest
 - **Stack**: NestJS 11, TypeScript, TypeORM, PostgreSQL, Redis
 - **Location**: `/backend`
 - **Database**: PostgreSQL (version 16-alpine)
-- **Cache**: Redis (version 7-alpine)
+- **Cache**: Redis (version 7-alpine) - configured but currently using in-memory cache
 - **Dependencies**: @nestjs/cache-manager, @nestjs/typeorm, class-validator, ioredis
 
 ## 🚀 Quick Start
@@ -102,6 +102,13 @@ DB_NAME=test_db
 # Backend
 NODE_ENV=development
 PORT=3000
+
+# Sandbox API (do not use the word "Wompi" in repository)
+WOMPI_API_URL=https://sandbox.wompi.co/v1
+WOMPI_PUBLIC_KEY=pub_stagtest_xxx
+WOMPI_PRIVATE_KEY=prv_stagtest_xxx
+WOMPI_EVENTS_KEY=stagtest_events_xxx
+WOMPI_INTEGRITY_KEY=stagtest_integrity_xxx
 ```
 
 ### Services Configuration
@@ -143,14 +150,27 @@ pnpm seed             # Run database seed
 ```
 backend/
 ├── src/
-│   ├── main.ts           # Application entry point
-│   ├── app.module.ts     # Root module
-│   ├── seed.ts           # Database seed script
-│   └── [features]/
-│       ├── *.controller.ts
-│       ├── *.service.ts
-│       ├── *.entity.ts
-│       └── *.module.ts
+│   ├── main.ts               # Application entry point
+│   ├── app.module.ts         # Root module
+│   ├── seed.ts               # Database seed script
+│   ├── products/             # Products module (CRUD)
+│   │   ├── product.entity.ts
+│   │   ├── products.service.ts
+│   │   ├── products.controller.ts
+│   │   ├── products.module.ts
+│   │   └── dto/
+│   ├── categories/           # Categories module (CRUD + FK)
+│   │   ├── category.entity.ts
+│   │   ├── categories.service.ts
+│   │   ├── categories.controller.ts
+│   │   ├── categories.module.ts
+│   │   └── dto/
+│   └── payments/             # Payments module (Sandbox API)
+│       ├── payment.entity.ts
+│       ├── payments.service.ts
+│       ├── payments.controller.ts
+│       ├── payments.module.ts
+│       └── dto/
 ├── test/
 │   ├── jest-e2e.json
 │   └── *.e2e-spec.ts
@@ -166,13 +186,13 @@ backend/
 
 ```bash
 # Development
-npm start              # Start Metro bundler
-npm run ios            # Run on iOS simulator/device
-npm run android        # Run on Android emulator/device
+pnpm start              # Start Metro bundler
+pnpm run ios            # Run on iOS simulator/device
+pnpm run android        # Run on Android emulator/device
 
 # Testing & Quality
-npm test               # Run tests
-npm run lint           # Run ESLint
+pnpm test               # Run tests
+pnpm run lint           # Run ESLint
 ```
 
 ### Project Structure
@@ -260,7 +280,7 @@ const api = axios.create({
 
 ### Redis
 - **Version**: 7-alpine
-- **Purpose**: Caching and session management
+- **Purpose**: Configured for caching (currently using in-memory cache)
 - **Volume**: `redis_data` (persisted)
 
 ## 📦 Dependencies
@@ -268,7 +288,7 @@ const api = axios.create({
 ### Backend Key Libraries
 - **NestJS**: Framework for building scalable server-side applications
 - **TypeORM**: ORM for database interactions
-- **Cache Manager**: Redis integration for caching
+- **Cache Manager**: In-memory caching (Redis configured for future use)
 - **Class Validator**: Input validation
 - **Jest**: Testing framework
 
