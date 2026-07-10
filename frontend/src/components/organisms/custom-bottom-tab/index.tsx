@@ -24,7 +24,7 @@ export default function CustomBottomTab({
           navigation.navigate(route.name as never);
         };
 
-        let iconName: string = isFocused ? 'time' : 'time-outline';
+        let iconName: string = isFocused ? 'home' : 'home-outline';
 
         if (route.name === 'Home') {
           iconName = isFocused ? 'home' : 'home-outline';

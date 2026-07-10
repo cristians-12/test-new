@@ -41,7 +41,7 @@ export default function BottomTabs() {
                 component={HomeScreen}
                 options={
                     {
-                        headerShown: true,
+                        headerShown: false,
                         // header: () => <CustomHeader />,
                         title: 'Inicio'
                     }}
