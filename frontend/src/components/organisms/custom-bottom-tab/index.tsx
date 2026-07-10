@@ -50,13 +50,13 @@ export default function CustomBottomTab({
             <Ionicons
               name={iconName}
               size={24}
-              color={isFocused ? 'white' : colors.secondary}
+              color={isFocused ? colors.secondary : 'white'}
             />
 
             <Text
               style={[
                 styles.tabName,
-                { color: isFocused ? 'white' : colors.secondary },
+                { color: isFocused ? colors.secondary : 'white' },
               ]}>
               {label}
             </Text>

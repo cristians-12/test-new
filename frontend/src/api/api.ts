@@ -3,7 +3,7 @@ import axios from 'axios';
 
 
 const apiClient = axios.create({
-  baseURL: 'https://iteach-backend-fkgpu.ondigitalocean.app',
+  baseURL: 'http://localhost:3000',
   timeout: 15000,
 });
 
