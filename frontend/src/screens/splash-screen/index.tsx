@@ -5,6 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import SplashAnimation from '../../components/templates/splash-animation';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { RootStackParamList } from '../../utils/types/navigation';
+
 type SplashProps = NativeStackScreenProps<RootStackParamList, 'Splash'>;
 export default function Splash({ navigation }: SplashProps) {
 
