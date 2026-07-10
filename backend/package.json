@@ -76,7 +76,8 @@
       "**/*.(t|j)s",
       "!**/main.ts",
       "!**/app.module.ts",
-      "!**/products.module.ts"
+      "!**/products.module.ts",
+      "!**/categories.module.ts"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
