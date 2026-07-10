@@ -6,7 +6,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 export type RootStackParamList = {
-    Splash: undefined;
+    Splash: {
+        navigation: NavigationProp<RootStackParamList>;
+    };
     Home: undefined;
 };
 
