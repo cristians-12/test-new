@@ -1,10 +1,11 @@
-import { IsOptional, IsString, IsNumber, Min } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsInt, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class QueryProductDto {
   @IsOptional()
-  @IsString()
-  category?: string;
+  @IsInt()
+  @Type(() => Number)
+  category_id?: number;
 
   @IsOptional()
   @IsString()

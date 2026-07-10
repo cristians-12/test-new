@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Product } from './product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -11,15 +11,15 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepo: Repository<Product>,
-  ) {}
+  ) { }
 
   async findAll(query: QueryProductDto) {
-    const { category, search, min_price, max_price, page = 1, limit = 20 } = query;
+    const { category_id, search, min_price, max_price, page = 1, limit = 20 } = query;
 
     const qb = this.productRepo.createQueryBuilder('product');
 
-    if (category) {
-      qb.andWhere('product.category = :category', { category });
+    if (category_id !== undefined) {
+      qb.andWhere('product.category_id = :category_id', { category_id });
     }
 
     if (search) {

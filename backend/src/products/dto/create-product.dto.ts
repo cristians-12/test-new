@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsBoolean,
   IsPositive,
+  IsInt,
   Min,
   MaxLength,
 } from 'class-validator';
@@ -25,8 +26,8 @@ export class CreateProductDto {
   @IsPositive()
   price!: number;
 
-  @IsString()
-  category!: string;
+  @IsInt()
+  category_id!: number;
 
   @IsOptional()
   @IsNumber()
