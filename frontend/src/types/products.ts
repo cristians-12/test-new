@@ -31,3 +31,8 @@ export interface ProductMeta {
   limit: number;
   totalPages: number;
 }
+
+export interface PaginatedProductsResponse {
+  data: Product[];
+  meta: ProductMeta;
+}
