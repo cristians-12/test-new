@@ -1,5 +1,10 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import type { ProductFilters } from '../../../types';
+import type { AxiosResponse } from 'axios';
+import type {
+  Product,
+  ProductFilters,
+  PaginatedProductsResponse,
+} from '../../../types';
 import {
   fetchProducts,
   fetchProductsSuccess,
@@ -24,7 +29,7 @@ function* fetchProductsSaga(
 ): Generator<any, void, any> {
   try {
     const params: ProductFilters = action.payload || {};
-    const response: any = yield call(
+    const response: AxiosResponse<PaginatedProductsResponse> = yield call(
       [apiClient, 'get'],
       '/products',
       { params },
@@ -41,7 +46,7 @@ function* fetchProductByIdSaga(
   action: ReturnType<typeof fetchProductById>,
 ): Generator<any, void, any> {
   try {
-    const response: any = yield call(
+    const response: AxiosResponse<Product> = yield call(
       [apiClient, 'get'],
       `/products/${action.payload}`,
     );
@@ -59,7 +64,7 @@ function* createProductSaga(
   action: ReturnType<typeof createProduct>,
 ): Generator<any, void, any> {
   try {
-    const response: any = yield call(
+    const response: AxiosResponse<Product> = yield call(
       [apiClient, 'post'],
       '/products',
       action.payload,
@@ -77,7 +82,7 @@ function* updateProductSaga(
 ): Generator<any, void, any> {
   try {
     const { id, data } = action.payload;
-    const response: any = yield call(
+    const response: AxiosResponse<Product> = yield call(
       [apiClient, 'put'],
       `/products/${id}`,
       data,
