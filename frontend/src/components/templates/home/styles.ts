@@ -9,5 +9,6 @@ export const styles = StyleSheet.create({
     },
     productContainer:{
         flex: 1,
+        marginBottom: 20
     }
 });

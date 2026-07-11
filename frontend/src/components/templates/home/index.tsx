@@ -33,6 +33,7 @@ export default function HomeTemplate() {
             renderItem={({ item }) => <ProductCard product={item} />}
             ListHeaderComponent={<CustomSearchHeader />}
             style={styles.productContainer}
+            showsVerticalScrollIndicator={false}
         />
     );
 }
