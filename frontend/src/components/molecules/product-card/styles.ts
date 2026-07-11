@@ -1,12 +1,13 @@
 import { StyleSheet } from "react-native";
 import { fontFamilies } from "../../../utils/fonts";
+import { colors } from "../../../utils/colors";
 
 export const styles = StyleSheet.create({
     title: {
-        color: 'black',
+        color: colors.primary,
         fontSize: 15,
         fontFamily: fontFamilies.satoshi.medium,
-        textAlign: 'center'
+        padding: 2
     },
     image: {
         width: '100%',
@@ -15,5 +16,10 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         margin: 5
+    },
+    price: {
+        color: 'black',
+        fontSize: 18,
+        fontFamily: fontFamilies.satoshi.bold
     }
 });
