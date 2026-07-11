@@ -302,6 +302,15 @@ const api = axios.create({
 
 ### Backend Testing
 
+| Metric | Result |
+|---|---|
+| Test Suites | 11 passed, 11 total |
+| Tests | **105 passed**, 105 total |
+| Coverage (Statements) | **94.3%** |
+| Coverage (Branches) | **81.41%** |
+| Coverage (Functions) | **92.59%** |
+| Coverage (Lines) | **95.96%** |
+
 ```bash
 cd backend
 
