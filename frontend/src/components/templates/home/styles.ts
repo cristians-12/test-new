@@ -6,5 +6,8 @@ export const styles = StyleSheet.create({
         fontFamily: fontFamilies.satoshi.regular,
         color: 'black',
         fontSize: 15
+    },
+    productContainer:{
+        flex: 1,
     }
 });

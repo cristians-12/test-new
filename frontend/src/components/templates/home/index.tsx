@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
-import { Text, View } from 'react-native';
-import { styles } from './styles';
+import React, { useEffect, useMemo } from 'react';
+import { FlatList } from 'react-native';
 import CustomSearchHeader from '../../organisms/custom-search-header';
 import { useAppDispatch, useAppSelector } from '../../../hooks';
 import { fetchProducts } from '../../../store/sagas/products/reducer';
 import TransparentLoading from '../../molecules/transparent-loading';
+import ProductCard from '../../molecules/product-card';
+import type { Product } from '../../../types';
+import { styles } from './styles';
 
 export default function HomeTemplate() {
 
@@ -15,15 +17,22 @@ export default function HomeTemplate() {
         dispatch(fetchProducts());
     }, []);
 
+    const productItems = useMemo(() => {
+        return items.filter((item) => item.is_active && item.stock > 0);
+    }, [items]);
+
     if (loading) {
         return <TransparentLoading />
     }
 
-    console.log(items);
-
     return (
-        <View>
-            <CustomSearchHeader />
-        </View>
+        <FlatList
+            data={productItems}
+            numColumns={2}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => <ProductCard product={item} />}
+            ListHeaderComponent={<CustomSearchHeader />}
+            style={styles.productContainer}
+        />
     );
 }
