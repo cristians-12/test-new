@@ -1,2 +1,1 @@
-export type { User } from './User';
-export type { ApiResponse } from './ApiResponse';
+export type { Product, ProductFilters, ProductMeta } from './products';
