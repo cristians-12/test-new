@@ -1,100 +1,102 @@
 # Monorepo - Frontend App & NestJS Backend
 
-A full-stack monorepo containing a React Native mobile app (frontend) and a NestJS backend with Docker support.
+Monorepo full-stack que contiene una app móvil React Native (frontend) y un backend NestJS con soporte Docker.
 
-## 📁 Project Structure
+## 📁 Estructura del Proyecto
 
 ```
 .
-├── frontend/           # React Native mobile application
-├── backend/            # NestJS API server
-├── docker-compose.yml  # Docker Compose orchestration
-└── README.md          # This file
+├── frontend/           # Aplicación móvil React Native
+├── backend/            # Servidor API NestJS
+├── docker-compose.yml  # Orquestación con Docker Compose
+└── README.md          # Este archivo
 ```
 
-## 🏗️ Architecture
+## 🏗️ Arquitectura
 
 ### Frontend
-- **Type**: React Native mobile app (iOS & Android)
+- **Tipo**: App móvil React Native (iOS & Android)
 - **Stack**: React Native 0.73.6, TypeScript, Redux, React Navigation
-- **Location**: `/frontend`
-- **Dependencies**: axios (HTTP client), redux-saga, react-native-vector-icons
+- **Ubicación**: `/frontend`
+- **Dependencias**: axios (cliente HTTP), redux-saga, react-native-vector-icons
 
 ### Backend
-- **Type**: NestJS REST API
+- **Tipo**: API REST con NestJS
 - **Stack**: NestJS 11, TypeScript, TypeORM, PostgreSQL, Redis
-- **Location**: `/backend`
-- **Database**: PostgreSQL (version 16-alpine)
-- **Cache**: Redis (version 7-alpine) - configured but currently using in-memory cache
-- **Dependencies**: @nestjs/cache-manager, @nestjs/typeorm, class-validator, ioredis
+- **Ubicación**: `/backend`
+- **Base de datos**: PostgreSQL (versión 16-alpine)
+- **Caché**: Redis (versión 7-alpine) - configurado pero actualmente usa caché en memoria
+- **Dependencias**: @nestjs/cache-manager, @nestjs/typeorm, class-validator, ioredis
 
-## 🚀 Quick Start
+## 🚀 Inicio Rápido
 
-### Prerequisites
+### Prerrequisitos
 - Node.js >= 18
 - Docker & Docker Compose
-- pnpm (for backend)
-- React Native CLI (for frontend)
+- pnpm (para el backend)
+- React Native CLI (para el frontend)
 
-### Running the Backend with Docker
+### Ejecutar el Backend con Docker
 
-1. **Clone the repository**
+1. **Clonar el repositorio**
    ```bash
-   git clone <repository-url>
-   cd <project-name>
+   git clone <url-del-repositorio>
+   cd <nombre-del-proyecto>
    ```
 
-2. **Set up environment variables**
+2. **Configurar variables de entorno**
    ```bash
    cp .env.example .env
    ```
 
-3. **Start all services with Docker Compose**
+3. **Iniciar todos los servicios con Docker Compose**
    ```bash
    docker compose up
    ```
 
-   This will start:
-   - PostgreSQL on `localhost:5432`
-   - Redis on `localhost:6379`
-   - Backend (NestJS) on `localhost:3000`
+   Esto iniciará:
+   - PostgreSQL en `localhost:5432`
+   - Redis en `localhost:6379`
+   - Backend (NestJS) en `localhost:3000`
 
-4. **Check service health**
+4. **Verificar el estado de los servicios**
    ```bash
    docker compose ps
    ```
 
-### Running the Frontend
+### Ejecutar el Frontend
 
-1. **Install dependencies**
+1. **Instalar dependencias**
    ```bash
    cd frontend
    npm install
-   # or
+   # o
    pnpm install
    ```
 
-2. **Start the Metro bundler**
+2. **Iniciar el bundler Metro**
    ```bash
    npm start
    ```
 
-3. **Run on iOS**
+3. **Ejecutar en iOS**
    ```bash
    npm run ios
    ```
 
-4. **Run on Android**
+4. **Ejecutar en Android**
    ```bash
    npm run android
    ```
 
-## 📋 Environment Variables
+   > **Nota:** `localhost` dentro del Android Emulator se refiere al emulador mismo, no a tu máquina. El cliente API está configurado para usar `10.0.2.2`, un alias especial que Android Emulator utiliza para acceder al `localhost` de la máquina anfitriona. Ver más detalles en [Red del Android Emulator](https://developer.android.com/tools/emulator#networking).
 
-Create a `.env` file in the root directory:
+## 📋 Variables de Entorno
+
+Crear un archivo `.env` en la raíz del proyecto:
 
 ```env
-# Database
+# Base de datos
 DB_USER=root
 DB_PASSWORD=root_secret
 DB_NAME=test_db
@@ -103,7 +105,7 @@ DB_NAME=test_db
 NODE_ENV=development
 PORT=3000
 
-# Sandbox API (do not use the word "Wompi" in repository)
+# API Sandbox (no usar la palabra "Wompi" en el repositorio)
 WOMPI_API_URL=https://sandbox.wompi.co/v1
 WOMPI_PUBLIC_KEY=pub_stagtest_xxx
 WOMPI_PRIVATE_KEY=prv_stagtest_xxx
@@ -111,61 +113,61 @@ WOMPI_EVENTS_KEY=stagtest_events_xxx
 WOMPI_INTEGRITY_KEY=stagtest_integrity_xxx
 ```
 
-### Services Configuration
+### Configuración de Servicios
 
-| Service | Host | Port | Credentials |
-|---------|------|------|-------------|
-| PostgreSQL | `postgres` (Docker) / `localhost` (Local) | 5432 | User: `root`, Pass: `root_secret` |
+| Servicio | Host | Puerto | Credenciales |
+|----------|------|--------|--------------|
+| PostgreSQL | `postgres` (Docker) / `localhost` (Local) | 5432 | Usuario: `root`, Contraseña: `root_secret` |
 | Redis | `redis` (Docker) / `localhost` (Local) | 6379 | - |
 | Backend API | `localhost` | 3000 | - |
 
-## 🔧 Backend Development
+## 🔧 Desarrollo del Backend
 
-### Available Scripts
+### Scripts Disponibles
 
 ```bash
-# Development
-pnpm start:dev        # Start with watch mode
+# Desarrollo
+pnpm start:dev        # Iniciar en modo watch
 
-# Build & Production
-pnpm build            # Compile TypeScript
-pnpm start:prod       # Run compiled application
+# Build y Producción
+pnpm build            # Compilar TypeScript
+pnpm start:prod       # Ejecutar aplicación compilada
 
 # Testing
-pnpm test             # Run unit tests
-pnpm test:watch       # Run tests in watch mode
-pnpm test:cov         # Generate coverage report
-pnpm test:e2e         # Run end-to-end tests
+pnpm test             # Ejecutar tests unitarios
+pnpm test:watch       # Ejecutar tests en modo watch
+pnpm test:cov         # Generar reporte de cobertura
+pnpm test:e2e         # Ejecutar tests end-to-end
 
-# Code Quality
-pnpm lint             # Fix ESLint issues
-pnpm format           # Format code with Prettier
+# Calidad de Código
+pnpm lint             # Corregir problemas de ESLint
+pnpm format           # Formatear código con Prettier
 
-# Database
-pnpm seed             # Run database seed
+# Base de datos
+pnpm seed             # Ejecutar seed de la base de datos
 ```
 
-### Project Structure
+### Estructura del Proyecto
 
 ```
 backend/
 ├── src/
-│   ├── main.ts               # Application entry point
-│   ├── app.module.ts         # Root module
-│   ├── seed.ts               # Database seed script
-│   ├── products/             # Products module (CRUD)
+│   ├── main.ts               # Punto de entrada de la aplicación
+│   ├── app.module.ts         # Módulo raíz
+│   ├── seed.ts               # Script de seed de la base de datos
+│   ├── products/             # Módulo de productos (CRUD)
 │   │   ├── product.entity.ts
 │   │   ├── products.service.ts
 │   │   ├── products.controller.ts
 │   │   ├── products.module.ts
 │   │   └── dto/
-│   ├── categories/           # Categories module (CRUD + FK)
+│   ├── categories/           # Módulo de categorías (CRUD + FK)
 │   │   ├── category.entity.ts
 │   │   ├── categories.service.ts
 │   │   ├── categories.controller.ts
 │   │   ├── categories.module.ts
 │   │   └── dto/
-│   └── payments/             # Payments module (Sandbox API)
+│   └── payments/             # Módulo de pagos (API Sandbox)
 │       ├── payment.entity.ts
 │       ├── payments.service.ts
 │       ├── payments.controller.ts
@@ -174,28 +176,28 @@ backend/
 ├── test/
 │   ├── jest-e2e.json
 │   └── *.e2e-spec.ts
-├── Dockerfile          # Docker build configuration
-├── .dockerignore       # Docker build exclusions
-├── package.json        # Dependencies
-└── tsconfig.json       # TypeScript configuration
+├── Dockerfile          # Configuración de build Docker
+├── .dockerignore       # Exclusiones del build Docker
+├── package.json        # Dependencias
+└── tsconfig.json       # Configuración de TypeScript
 ```
 
-## 📱 Frontend Development
+## 📱 Desarrollo del Frontend
 
-### Available Scripts
+### Scripts Disponibles
 
 ```bash
-# Development
-pnpm start              # Start Metro bundler
-pnpm run ios            # Run on iOS simulator/device
-pnpm run android        # Run on Android emulator/device
+# Desarrollo
+pnpm start              # Iniciar bundler Metro
+pnpm run ios            # Ejecutar en simulador/dispositivo iOS
+pnpm run android        # Ejecutar en emulador/dispositivo Android
 
-# Testing & Quality
-pnpm test               # Run tests
-pnpm run lint           # Run ESLint
+# Testing y Calidad
+pnpm test               # Ejecutar tests
+pnpm run lint           # Ejecutar ESLint
 ```
 
-### Project Structure
+### Estructura del Proyecto
 
 ```
 frontend/
@@ -206,176 +208,176 @@ frontend/
 │   ├── components/
 │   ├── redux/
 │   └── utils/
-├── ios/                # iOS native code
-├── android/            # Android native code
+├── ios/                # Código nativo de iOS
+├── android/            # Código nativo de Android
 ├── __tests__/
-├── app.json            # App configuration
-├── metro.config.js     # Metro bundler config
-├── package.json        # Dependencies
-└── tsconfig.json       # TypeScript configuration
+├── app.json            # Configuración de la app
+├── metro.config.js     # Configuración del bundler Metro
+├── package.json        # Dependencias
+└── tsconfig.json       # Configuración de TypeScript
 ```
 
 ## 🐳 Docker & Docker Compose
 
-### Build Backend Image
+### Construir imagen del Backend
 
 ```bash
 docker build -t backend:latest ./backend
 ```
 
-### Docker Compose Services
+### Servicios de Docker Compose
 
-```yaml
-# Run all services
+```bash
+# Ejecutar todos los servicios
 docker compose up
 
-# Run in background
+# Ejecutar en segundo plano
 docker compose up -d
 
-# Stop all services
+# Detener todos los servicios
 docker compose down
 
-# View logs
+# Ver logs
 docker compose logs -f backend
 docker compose logs -f postgres
 docker compose logs -f redis
 ```
 
-### Backend Dockerfile
+### Dockerfile del Backend
 
-The backend uses a multi-stage Alpine-based build:
+El backend usa un build multi-stage basado en Alpine:
 - **Base**: `node:22-alpine`
-- **Package Manager**: pnpm
-- **Port**: 3000
-- **Watch Mode**: Enabled for development
+- **Gestor de paquetes**: pnpm
+- **Puerto**: 3000
+- **Modo watch**: Habilitado para desarrollo
 
 ### Health Checks
 
-All services include health checks:
-- **PostgreSQL**: `pg_isready` check every 5s
-- **Redis**: `redis-cli ping` check every 5s
+Todos los servicios incluyen health checks:
+- **PostgreSQL**: Verificación con `pg_isready` cada 5s
+- **Redis**: Verificación con `redis-cli ping` cada 5s
 
-## 🔌 API Integration
+## 🔌 Integración API
 
-The frontend connects to the backend via HTTP:
-- **Base URL**: `http://localhost:3000` (dev) or your production domain
-- **Client Library**: Axios
-- **State Management**: Redux with Redux Saga
+El frontend se conecta al backend vía HTTP:
+- **URL base**: `http://10.0.2.2:3000/api` (Android Emulator) / `http://localhost:3000/api` (iOS Simulator / Web)
+- **Biblioteca cliente**: Axios
+- **Gestión de estado**: Redux con Redux Saga
 
-Example connection in frontend:
+Ejemplo de conexión en el frontend:
 ```typescript
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
-  timeout: 5000,
+  baseURL: 'http://10.0.2.2:3000/api', // Android Emulator
+  timeout: 15000,
 });
 ```
 
-## 🗄️ Database
+## 🗄️ Base de Datos
 
 ### PostgreSQL
-- **Version**: 16-alpine
-- **Default Database**: `test_db`
-- **Volume**: `postgres_data` (persisted)
-- **Migrations**: Configure in your NestJS service
+- **Versión**: 16-alpine
+- **Base de datos por defecto**: `test_db`
+- **Volumen**: `postgres_data` (persistido)
+- **Migraciones**: Configurar en tu servicio NestJS
 
 ### Redis
-- **Version**: 7-alpine
-- **Purpose**: Configured for caching (currently using in-memory cache)
-- **Volume**: `redis_data` (persisted)
+- **Versión**: 7-alpine
+- **Propósito**: Configurado para caché (actualmente usa caché en memoria)
+- **Volumen**: `redis_data` (persistido)
 
-## 📦 Dependencies
+## 📦 Dependencias
 
-### Backend Key Libraries
-- **NestJS**: Framework for building scalable server-side applications
-- **TypeORM**: ORM for database interactions
-- **Cache Manager**: In-memory caching (Redis configured for future use)
-- **Class Validator**: Input validation
-- **Jest**: Testing framework
+### Bibliotecas Principales del Backend
+- **NestJS**: Framework para construir aplicaciones escalables del lado del servidor
+- **TypeORM**: ORM para interacciones con la base de datos
+- **Cache Manager**: Caché en memoria (Redis configurado para uso futuro)
+- **Class Validator**: Validación de entradas
+- **Jest**: Framework de testing
 
-### Frontend Key Libraries
-- **React Native**: Cross-platform mobile framework
-- **Redux Toolkit**: State management
-- **React Navigation**: Navigation library
-- **Axios**: HTTP client
+### Bibliotecas Principales del Frontend
+- **React Native**: Framework móvil multiplataforma
+- **Redux Toolkit**: Gestión de estado
+- **React Navigation**: Biblioteca de navegación
+- **Axios**: Cliente HTTP
 
 ## 🧪 Testing
 
-### Backend Testing
+### Tests del Backend
 
-| Metric | Result |
+| Métrica | Resultado |
 |---|---|
-| Test Suites | 11 passed, 11 total |
-| Tests | **105 passed**, 105 total |
-| Coverage (Statements) | **94.3%** |
-| Coverage (Branches) | **81.41%** |
-| Coverage (Functions) | **92.59%** |
-| Coverage (Lines) | **95.96%** |
+| Test Suites | 11 pasaron, 11 total |
+| Tests | **105 pasaron**, 105 total |
+| Cobertura (Statements) | **94.3%** |
+| Cobertura (Branches) | **81.41%** |
+| Cobertura (Functions) | **92.59%** |
+| Cobertura (Lines) | **95.96%** |
 
 ```bash
 cd backend
 
-# Unit tests
+# Tests unitarios
 pnpm test
 
-# Watch mode
+# Modo watch
 pnpm test:watch
 
-# Coverage report
+# Reporte de cobertura
 pnpm test:cov
 
-# E2E tests
+# Tests E2E
 pnpm test:e2e
 ```
 
-### Frontend Testing
+### Tests del Frontend
 
 ```bash
 cd frontend
 
-# Run tests
+# Ejecutar tests
 npm test
 ```
 
-## 📚 Code Quality
+## 📚 Calidad de Código
 
-### Linting & Formatting
+### Linting y Formateo
 
 **Backend:**
 ```bash
 cd backend
-pnpm lint      # Fix ESLint issues
-pnpm format    # Format with Prettier
+pnpm lint      # Corregir problemas de ESLint
+pnpm format    # Formatear con Prettier
 ```
 
 **Frontend:**
 ```bash
 cd frontend
-npm run lint   # Run ESLint
+npm run lint   # Ejecutar ESLint
 ```
 
-## 🚢 Production Deployment
+## 🚢 Despliegue en Producción
 
-### Backend Deployment
+### Despliegue del Backend
 
-1. **Build production image**
+1. **Construir imagen de producción**
    ```bash
    docker build -t myapp/backend:1.0.0 ./backend
    ```
 
-2. **Update docker-compose.yml** with production settings:
-   - Change `NODE_ENV: production`
-   - Remove volume mounts for source code
-   - Update database credentials
-   - Use production build command instead of watch mode
+2. **Actualizar docker-compose.yml** con configuración de producción:
+   - Cambiar `NODE_ENV: production`
+   - Eliminar volume mounts del código fuente
+   - Actualizar credenciales de la base de datos
+   - Usar comando de build de producción en vez del modo watch
 
-3. **Push to registry**
+3. **Subir al registro**
    ```bash
    docker push myapp/backend:1.0.0
    docker push myapp/redis:1.0.0
    docker push myapp/postgres:1.0.0
    ```
 
-### Frontend Deployment
+### Despliegue del Frontend
 
 **iOS:**
 ```bash
@@ -389,50 +391,52 @@ cd frontend
 npm run android -- --variant release
 ```
 
-## 🔐 Security
+## 🔐 Seguridad
 
-- **Environment Variables**: Store secrets in `.env` (not committed to git)
-- **Input Validation**: Backend uses class-validator for all inputs
-- **Docker**: Services run with minimal privileges and Alpine-based images
-- **Database**: Use strong credentials in production
+- **Variables de entorno**: Almacenar secretos en `.env` (no se commitea a git)
+- **Validación de entradas**: El backend usa class-validator para todas las entradas
+- **Docker**: Los servicios se ejecutan con privilegios mínimos e imágenes basadas en Alpine
+- **Base de datos**: Usar credenciales seguras en producción
 
-## 📖 Additional Resources
+## 📖 Recursos Adicionales
 
-- [NestJS Documentation](https://docs.nestjs.com/)
-- [React Native Documentation](https://reactnative.dev/)
-- [Docker Documentation](https://docs.docker.com/)
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-- [Redis Documentation](https://redis.io/docs/)
+- [Documentación de NestJS](https://docs.nestjs.com/)
+- [Documentación de React Native](https://reactnative.dev/)
+- [Documentación de Docker](https://docs.docker.com/)
+- [Documentación de PostgreSQL](https://www.postgresql.org/docs/)
+- [Documentación de Redis](https://redis.io/docs/)
 
-## 🐛 Troubleshooting
+## 🐛 Solución de Problemas
 
-### Backend won't start
+### El backend no inicia
 ```bash
-# Check if port 3000 is in use
+# Verificar si el puerto 3000 está en uso
 lsof -i :3000
 
-# Check Docker logs
+# Verificar logs de Docker
 docker compose logs backend
 ```
 
-### Database connection issues
+### Problemas de conexión a la base de datos
 ```bash
-# Verify PostgreSQL is running
+# Verificar que PostgreSQL esté ejecutándose
 docker compose logs postgres
 
-# Check health
+# Verificar estado
 docker compose ps
 ```
 
-### Frontend won't connect to backend
-- Verify backend is running: `docker compose ps`
-- Check API base URL in frontend configuration
-- Ensure firewall allows connections to port 3000
+### El frontend no se conecta al backend
+- Verificar que el backend esté ejecutándose: `docker compose ps`
+- Verificar la URL base de la API en la configuración del frontend (`frontend/src/api/api.ts`)
+- Asegurar que el firewall permita conexiones al puerto 3000
+- **Android Emulator:** El cliente API usa `10.0.2.2` en lugar de `localhost`. Este es un alias especial que Android Emulator utiliza para acceder a la máquina anfitriona. Si cambias la URL, asegúrate de usar `10.0.2.2` y no `localhost` al ejecutar en un emulador de Android. Ver [Red del Android Emulator](https://developer.android.com/tools/emulator#networking).
+- **iOS Simulator:** `localhost` funciona normalmente ya que el simulador comparte la red del anfitrión.
 
-## 📝 License
+## 📝 Licencia
 
 UNLICENSED
 
-## 👥 Contributing
+## 👥 Contribuir
 
-Follow the existing code style and ensure all tests pass before submitting changes.
+Seguir el estilo de código existente y asegurar que todos los tests pasen antes de enviar cambios.
