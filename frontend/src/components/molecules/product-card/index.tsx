@@ -4,7 +4,7 @@ import { Product } from '../../../types';
 import { styles } from './styles';
 import ImageComponent from '../image-component';
 import { images } from '../../../assets';
-import { formatCurrencyPrice } from '../../../utils/functions/formatters/formatPrice';
+import { formatCurrencyPrice } from '../../../utils';
 
 interface Props {
     product: Product;

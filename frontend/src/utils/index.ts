@@ -1,2 +1,1 @@
-export { formatDate } from './formatDate';
-export { validateEmail } from './validateEmail';
+export { formatCurrencyPrice, formatCurrency } from './functions/formatters/formatPrice';
