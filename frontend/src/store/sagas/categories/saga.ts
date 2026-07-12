@@ -20,7 +20,7 @@ import {
 } from './reducer';
 import apiClient from '../../../api/api';
 
-function* fetchCategoriesSaga(): Generator<any, void, any> {
+export function* fetchCategoriesSaga(): Generator<any, void, any> {
   try {
     const response: AxiosResponse<Category[]> = yield call(
       [apiClient, 'get'],
@@ -34,7 +34,7 @@ function* fetchCategoriesSaga(): Generator<any, void, any> {
   }
 }
 
-function* fetchCategoryByIdSaga(
+export function* fetchCategoryByIdSaga(
   action: ReturnType<typeof fetchCategoryById>,
 ): Generator<any, void, any> {
   try {
@@ -52,7 +52,7 @@ function* fetchCategoryByIdSaga(
   }
 }
 
-function* createCategorySaga(
+export function* createCategorySaga(
   action: ReturnType<typeof createCategory>,
 ): Generator<any, void, any> {
   try {
@@ -69,7 +69,7 @@ function* createCategorySaga(
   }
 }
 
-function* updateCategorySaga(
+export function* updateCategorySaga(
   action: ReturnType<typeof updateCategory>,
 ): Generator<any, void, any> {
   try {
@@ -87,7 +87,7 @@ function* updateCategorySaga(
   }
 }
 
-function* deleteCategorySaga(
+export function* deleteCategorySaga(
   action: ReturnType<typeof deleteCategory>,
 ): Generator<any, void, any> {
   try {
