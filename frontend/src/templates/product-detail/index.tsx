@@ -1,9 +1,13 @@
 import React from 'react';
 
-export default function ProductDetailTemplate() {
+interface Props {
+  id: string | number;
+}
+
+export default function ProductDetailTemplate({ id }: Props) {
   return (
     <>
-    
+
     </>
   );
 }

@@ -13,7 +13,7 @@ export default function ProductDetailScreen() {
 
     return (
         <SafeAreaView>
-            <ProductDetailTemplate />
+            <ProductDetailTemplate id={id} />
         </SafeAreaView>
     );
 }
