@@ -34,18 +34,21 @@ export class PaymentsService {
   }
 
   async create(dto: CreatePaymentDto) {
-    const product = await this.productRepo.findOneBy({ id: dto.product_id });
-    if (!product) {
-      throw new NotFoundException(`Producto #${dto.product_id} no encontrado`);
-    }
-
-    if (!product.is_active) {
-      throw new BadRequestException('El producto no esta disponible');
-    }
-
-    if (product.stock <= 0) {
-      throw new BadRequestException('Sin stock disponible');
-    }
+    const products = await Promise.all(
+      dto.items.map(async (item) => {
+        const product = await this.productRepo.findOneBy({ id: item.product_id });
+        if (!product) {
+          throw new NotFoundException(`Producto #${item.product_id} no encontrado`);
+        }
+        if (!product.is_active) {
+          throw new BadRequestException(`Producto #${item.product_id} no esta disponible`);
+        }
+        if (product.stock < item.quantity) {
+          throw new BadRequestException(`Stock insuficiente para ${product.name}`);
+        }
+        return { product, quantity: item.quantity };
+      }),
+    );
 
     const reference = dto.reference || `ref_${Date.now()}`;
 
@@ -54,13 +57,20 @@ export class PaymentsService {
       throw new BadRequestException('La referencia ya existe');
     }
 
+    const totalAmount = products.reduce(
+      (sum, { product, quantity }) => sum + product.price * quantity,
+      0,
+    );
+
+    const productNames = products.map(({ product }) => product.name).join(', ');
+
     const payment = this.paymentRepo.create({
       reference,
-      amount_in_cents: product.price * 100,
+      amount_in_cents: totalAmount * 100,
       currency: 'COP',
       customer_email: dto.customer_email,
-      product_id: product.id,
-      product_name: product.name,
+      product_id: products[0].product.id,
+      product_name: productNames,
       status: PaymentStatus.PENDING,
     });
 
@@ -96,6 +106,43 @@ export class PaymentsService {
     if (!payment) {
       throw new NotFoundException(`Pago #${id} no encontrado`);
     }
+
+    if (payment.status === PaymentStatus.PENDING && payment.wompi_transaction_id) {
+      try {
+        const response = await fetch(
+          `${this.wompiApiUrl}/transactions/${payment.wompi_transaction_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.wompiPrivateKey}`,
+            },
+          },
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const wompiStatus = data?.data?.status;
+          if (wompiStatus) {
+            const newStatus = this.mapWompiStatus(wompiStatus);
+            if (newStatus !== payment.status) {
+              payment.status = newStatus;
+              payment.response_data = data;
+              if (newStatus === PaymentStatus.APPROVED) {
+                const product = await this.productRepo.findOneBy({
+                  id: payment.product_id || undefined,
+                });
+                if (product && product.stock > 0) {
+                  product.stock -= 1;
+                  await this.productRepo.save(product);
+                }
+              }
+              await this.paymentRepo.save(payment);
+            }
+          }
+        }
+      } catch (error) {
+        this.logger.warn('Error consultando estado en Wompi', error);
+      }
+    }
+
     return payment;
   }
 
