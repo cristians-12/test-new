@@ -24,7 +24,7 @@ import {
 } from './reducer';
 import apiClient from '../../../api/api';
 
-function* fetchProductsSaga(
+export function* fetchProductsSaga(
   action: ReturnType<typeof fetchProducts>,
 ): Generator<any, void, any> {
   try {
@@ -42,7 +42,7 @@ function* fetchProductsSaga(
   }
 }
 
-function* fetchProductByIdSaga(
+export function* fetchProductByIdSaga(
   action: ReturnType<typeof fetchProductById>,
 ): Generator<any, void, any> {
   try {
@@ -60,7 +60,7 @@ function* fetchProductByIdSaga(
   }
 }
 
-function* createProductSaga(
+export function* createProductSaga(
   action: ReturnType<typeof createProduct>,
 ): Generator<any, void, any> {
   try {
@@ -77,7 +77,7 @@ function* createProductSaga(
   }
 }
 
-function* updateProductSaga(
+export function* updateProductSaga(
   action: ReturnType<typeof updateProduct>,
 ): Generator<any, void, any> {
   try {
@@ -95,7 +95,7 @@ function* updateProductSaga(
   }
 }
 
-function* deleteProductSaga(
+export function* deleteProductSaga(
   action: ReturnType<typeof deleteProduct>,
 ): Generator<any, void, any> {
   try {
