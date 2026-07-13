@@ -1,13 +1,20 @@
-import React from 'react';
-import { View, Text, FlatList } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import { styles } from './styles';
-import { useAppSelector } from '../../hooks';
+import { useAppSelector, useAppDispatch } from '../../hooks';
 import { PaymentResponse } from '../../store/sagas/payment/reducer';
+import { fetchPaymentHistory } from '../../store/sagas/payment/reducer';
 import { PAYMENT_STATUS } from '../../constants';
 import { formatCurrencyPrice } from '../../utils';
 
 export default function PaymentHistoryTemplate() {
+  const dispatch = useAppDispatch();
   const payments = useAppSelector((state) => state.payment.payments);
+  const loading = useAppSelector((state) => state.payment.loading);
+
+  useEffect(() => {
+    dispatch(fetchPaymentHistory());
+  }, [dispatch]);
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -96,6 +103,9 @@ export default function PaymentHistoryTemplate() {
           {payments.length} {payments.length === 1 ? 'pago registrado' : 'pagos registrados'}
         </Text>
       </View>
+      {loading && (
+        <ActivityIndicator size="small" color="#6C63FF" style={{ marginVertical: 10 }} />
+      )}
       <FlatList
         data={payments}
         keyExtractor={(item) => item.id.toString()}

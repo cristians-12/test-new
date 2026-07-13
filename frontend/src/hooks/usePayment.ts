@@ -10,7 +10,7 @@ interface UsePaymentOptions {
 }
 
 export function usePayment(options: UsePaymentOptions = {}) {
-  const { pollInterval = 10000, onApproved, onDeclined } = options;
+  const { pollInterval = 5000, onApproved, onDeclined } = options;
   const dispatch = useAppDispatch();
   const { currentPayment, loading, error } = useAppSelector(
     (state) => state.payment,

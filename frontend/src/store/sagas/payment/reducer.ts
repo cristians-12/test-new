@@ -67,6 +67,17 @@ const paymentSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
+    fetchPaymentHistory(state) {
+      state.loading = true;
+    },
+    fetchPaymentHistorySuccess(state, action: PayloadAction<PaymentResponse[]>) {
+      state.payments = action.payload;
+      state.loading = false;
+    },
+    fetchPaymentHistoryFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
@@ -77,6 +88,9 @@ export const {
   pollPaymentStatus,
   pollPaymentStatusSuccess,
   clearPayment,
+  fetchPaymentHistory,
+  fetchPaymentHistorySuccess,
+  fetchPaymentHistoryFailure,
 } = paymentSlice.actions;
 
 export default paymentSlice.reducer;
