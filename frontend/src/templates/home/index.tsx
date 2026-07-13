@@ -1,12 +1,9 @@
 import React, { useEffect, useMemo } from 'react';
 import { FlatList } from 'react-native';
-import CustomSearchHeader from '../../components/organisms/custom-search-header';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { fetchProducts } from '../../store/sagas/products/reducer';
-import TransparentLoading from '../../components/molecules/transparent-loading';
-import ProductCard from '../../components/molecules/product-card';
-import type { Product } from '../../types';
 import { styles } from './styles';
+import { CustomSearchHeader, ProductCard, TransparentLoading } from '../../components';
 
 export default function HomeTemplate() {
 

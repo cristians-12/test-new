@@ -1,11 +1,11 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from '../screens/home';
-import SplashScreen from '../screens/splash-screen';
+
 import { RootStackParamList } from '../types/navigation';
 import { colors } from '../utils/colors';
 import BottomTabs from './bottom-tabs';
-import CartScreen from '../screens/cart';
+import { CartScreen, SplashScreen } from '../screens';
+
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
