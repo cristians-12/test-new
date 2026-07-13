@@ -107,12 +107,6 @@ export default function PaymentHistoryTemplate() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Historial de pagos</Text>
-        <Text style={styles.headerSubtitle}>
-          {payments.length} {payments.length === 1 ? 'pago registrado' : 'pagos registrados'}
-        </Text>
-      </View>
       {loading && (
         <ActivityIndicator size="small" color="#6C63FF" style={{ marginVertical: 10 }} />
       )}
