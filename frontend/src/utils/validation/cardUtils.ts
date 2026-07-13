@@ -8,7 +8,7 @@ export function detectCardType(cardNumber: string): CardType {
 }
 
 export function luhnCheck(cardNumber: string): boolean {
-  const digits = cardNumber.replace(/\s/g, '');
+  const digits = cardNumber.replace(/[\s-]/g, '');
   if (!/^\d+$/.test(digits)) return false;
 
   let sum = 0;
