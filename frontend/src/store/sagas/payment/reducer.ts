@@ -24,12 +24,14 @@ export interface PaymentResponse {
 
 interface PaymentState {
   currentPayment: PaymentResponse | null;
+  payments: PaymentResponse[];
   loading: boolean;
   error: string | null;
 }
 
 const initialState: PaymentState = {
   currentPayment: null,
+  payments: [],
   loading: false,
   error: null,
 };
@@ -45,6 +47,7 @@ const paymentSlice = createSlice({
     },
     processPaymentSuccess(state, action: PayloadAction<PaymentResponse>) {
       state.currentPayment = action.payload;
+      state.payments.unshift(action.payload);
       state.loading = false;
     },
     processPaymentFailure(state, action: PayloadAction<string>) {
@@ -54,6 +57,10 @@ const paymentSlice = createSlice({
     pollPaymentStatus(state, _action: PayloadAction<number>) {},
     pollPaymentStatusSuccess(state, action: PayloadAction<PaymentResponse>) {
       state.currentPayment = action.payload;
+      const index = state.payments.findIndex((p) => p.id === action.payload.id);
+      if (index !== -1) {
+        state.payments[index] = action.payload;
+      }
     },
     clearPayment(state) {
       state.currentPayment = null;
