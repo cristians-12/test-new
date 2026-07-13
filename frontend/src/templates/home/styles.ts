@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { fontFamilies } from "../../../utils/fonts";
+import { fontFamilies } from "../../utils/fonts";
 
 export const styles = StyleSheet.create({
     text: {
@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
         color: 'black',
         fontSize: 15
     },
-    productContainer:{
+    productContainer: {
         flex: 1,
         marginBottom: 20
     }
