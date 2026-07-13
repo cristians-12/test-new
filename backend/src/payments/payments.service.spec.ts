@@ -6,6 +6,15 @@ import { Payment, PaymentStatus } from './payment.entity';
 import { Product } from '../products/product.entity';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 
+const mockComputeSignature = async (events: any[]): Promise<string> => {
+  const eventsJson = JSON.stringify(events);
+  const encoder = new TextEncoder();
+  const data = encoder.encode(eventsJson);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+};
+
 describe('PaymentsService', () => {
   let service: PaymentsService;
 
@@ -19,6 +28,7 @@ describe('PaymentsService', () => {
     wompi_transaction_id: null,
     product_id: 1,
     product_name: 'Test Product',
+    product_quantity: [2],
     payment_method: null,
     response_data: null,
     created_at: new Date(),
@@ -41,6 +51,7 @@ describe('PaymentsService', () => {
   const mockPaymentRepo = {
     create: jest.fn().mockReturnValue(mockPayment),
     save: jest.fn().mockResolvedValue(mockPayment),
+    find: jest.fn().mockResolvedValue([mockPayment]),
     findOneBy: jest.fn(),
   };
 
@@ -104,7 +115,7 @@ describe('PaymentsService', () => {
       });
 
       const result = await service.create({
-        product_id: 1,
+        items: [{ product_id: 1, quantity: 2 }],
         customer_email: 'test@example.com',
         card_number: '4242424242424242',
         cvv: '123',
@@ -122,7 +133,7 @@ describe('PaymentsService', () => {
 
       await expect(
         service.create({
-          product_id: 999,
+          items: [{ product_id: 999, quantity: 1 }],
           customer_email: 'test@example.com',
           card_number: '4242424242424242',
           cvv: '123',
@@ -141,7 +152,7 @@ describe('PaymentsService', () => {
 
       await expect(
         service.create({
-          product_id: 1,
+          items: [{ product_id: 1, quantity: 1 }],
           customer_email: 'test@example.com',
           card_number: '4242424242424242',
           cvv: '123',
@@ -160,7 +171,7 @@ describe('PaymentsService', () => {
 
       await expect(
         service.create({
-          product_id: 1,
+          items: [{ product_id: 1, quantity: 1 }],
           customer_email: 'test@example.com',
           card_number: '4242424242424242',
           cvv: '123',
@@ -177,7 +188,7 @@ describe('PaymentsService', () => {
 
       await expect(
         service.create({
-          product_id: 1,
+          items: [{ product_id: 1, quantity: 1 }],
           customer_email: 'test@example.com',
           reference: 'existing_ref',
           card_number: '4242424242424242',
@@ -187,6 +198,16 @@ describe('PaymentsService', () => {
           card_holder: 'APPROVED',
         }),
       ).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return all payments ordered by created_at DESC', async () => {
+      const result = await service.findAll();
+      expect(result).toEqual([mockPayment]);
+      expect(mockPaymentRepo.find).toHaveBeenCalledWith({
+        order: { created_at: 'DESC' },
+      });
     });
   });
 
@@ -228,8 +249,35 @@ describe('PaymentsService', () => {
     });
   });
 
+  describe('refreshPendingPayments', () => {
+    it('should return all payments after refreshing pending ones', async () => {
+      const result = await service.refreshPendingPayments();
+      expect(result).toEqual([mockPayment]);
+      expect(mockPaymentRepo.find).toHaveBeenCalled();
+    });
+  });
+
   describe('handleWebhook', () => {
-    it('should update transaction status on webhook event', async () => {
+    it('should throw BadRequestException for invalid signature', async () => {
+      await expect(
+        service.handleWebhook('invalid_signature', [
+          {
+            event: 'transaction.updated',
+            data: { transaction: { id: 123, reference: 'test_ref', status: 'APPROVED' } },
+          },
+        ]),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should update transaction status on valid webhook event', async () => {
+      const events = [
+        {
+          event: 'transaction.updated',
+          data: { transaction: { id: 123, reference: 'test_ref', status: 'APPROVED' } },
+        },
+      ];
+      const validSignature = await mockComputeSignature(events);
+
       const paymentWithWompiId = { ...mockPayment, wompi_transaction_id: '123' };
       mockPaymentRepo.findOneBy.mockResolvedValue(paymentWithWompiId);
       mockProductRepo.findOneBy.mockResolvedValue(mockProduct);
@@ -239,12 +287,7 @@ describe('PaymentsService', () => {
       });
       mockProductRepo.save.mockResolvedValue({ ...mockProduct, stock: 9 });
 
-      await service.handleWebhook('test_signature', [
-        {
-          event: 'transaction.updated',
-          data: { transaction: { id: 123, reference: 'test_ref', status: 'APPROVED' } },
-        },
-      ]);
+      await service.handleWebhook(validSignature, events);
 
       expect(mockPaymentRepo.findOneBy).toHaveBeenCalledWith({
         wompi_transaction_id: '123',
@@ -252,17 +295,21 @@ describe('PaymentsService', () => {
     });
 
     it('should handle non-transaction.updated events gracefully', async () => {
-      await service.handleWebhook('test_signature', [
-        { event: 'other.event', data: {} },
-      ]);
+      const events = [{ event: 'other.event', data: {} }];
+      const validSignature = await mockComputeSignature(events);
+
+      await service.handleWebhook(validSignature, events);
 
       expect(mockPaymentRepo.findOneBy).not.toHaveBeenCalled();
     });
 
     it('should handle missing transaction data', async () => {
-      await service.handleWebhook('test_signature', [
+      const events = [
         { event: 'transaction.updated', data: {} },
-      ]);
+      ];
+      const validSignature = await mockComputeSignature(events);
+
+      await service.handleWebhook(validSignature, events);
 
       expect(mockPaymentRepo.findOneBy).not.toHaveBeenCalled();
     });
@@ -270,6 +317,14 @@ describe('PaymentsService', () => {
 
   describe('mapWompiStatus', () => {
     it('should map APPROVED status', async () => {
+      const events = [
+        {
+          event: 'transaction.updated',
+          data: { transaction: { id: 123, status: 'APPROVED' } },
+        },
+      ];
+      const validSignature = await mockComputeSignature(events);
+
       const paymentWithWompiId = { ...mockPayment, wompi_transaction_id: '123' };
       mockPaymentRepo.findOneBy.mockResolvedValue(paymentWithWompiId);
       mockProductRepo.findOneBy.mockResolvedValue(mockProduct);
@@ -279,18 +334,21 @@ describe('PaymentsService', () => {
       });
       mockProductRepo.save.mockResolvedValue({ ...mockProduct, stock: 9 });
 
-      await service.handleWebhook('sig', [
-        {
-          event: 'transaction.updated',
-          data: { transaction: { id: 123, status: 'APPROVED' } },
-        },
-      ]);
+      await service.handleWebhook(validSignature, events);
 
       const savedPayment = mockPaymentRepo.save.mock.calls[0][0];
       expect(savedPayment.status).toBe(PaymentStatus.APPROVED);
     });
 
     it('should map DECLINED status', async () => {
+      const events = [
+        {
+          event: 'transaction.updated',
+          data: { transaction: { id: 456, status: 'DECLINED' } },
+        },
+      ];
+      const validSignature = await mockComputeSignature(events);
+
       const paymentWithWompiId = { ...mockPayment, wompi_transaction_id: '456' };
       mockPaymentRepo.findOneBy.mockResolvedValue(paymentWithWompiId);
       mockPaymentRepo.save.mockResolvedValue({
@@ -298,18 +356,21 @@ describe('PaymentsService', () => {
         status: PaymentStatus.DECLINED,
       });
 
-      await service.handleWebhook('sig', [
-        {
-          event: 'transaction.updated',
-          data: { transaction: { id: 456, status: 'DECLINED' } },
-        },
-      ]);
+      await service.handleWebhook(validSignature, events);
 
       const savedPayment = mockPaymentRepo.save.mock.calls[0][0];
       expect(savedPayment.status).toBe(PaymentStatus.DECLINED);
     });
 
     it('should map VOIDED status', async () => {
+      const events = [
+        {
+          event: 'transaction.updated',
+          data: { transaction: { id: 789, status: 'VOIDED' } },
+        },
+      ];
+      const validSignature = await mockComputeSignature(events);
+
       const paymentWithWompiId = { ...mockPayment, wompi_transaction_id: '789' };
       mockPaymentRepo.findOneBy.mockResolvedValue(paymentWithWompiId);
       mockPaymentRepo.save.mockResolvedValue({
@@ -317,18 +378,21 @@ describe('PaymentsService', () => {
         status: PaymentStatus.VOIDED,
       });
 
-      await service.handleWebhook('sig', [
-        {
-          event: 'transaction.updated',
-          data: { transaction: { id: 789, status: 'VOIDED' } },
-        },
-      ]);
+      await service.handleWebhook(validSignature, events);
 
       const savedPayment = mockPaymentRepo.save.mock.calls[0][0];
       expect(savedPayment.status).toBe(PaymentStatus.VOIDED);
     });
 
     it('should map ERROR status', async () => {
+      const events = [
+        {
+          event: 'transaction.updated',
+          data: { transaction: { id: 999, status: 'ERROR' } },
+        },
+      ];
+      const validSignature = await mockComputeSignature(events);
+
       const paymentWithWompiId = { ...mockPayment, wompi_transaction_id: '999' };
       mockPaymentRepo.findOneBy.mockResolvedValue(paymentWithWompiId);
       mockPaymentRepo.save.mockResolvedValue({
@@ -336,18 +400,21 @@ describe('PaymentsService', () => {
         status: PaymentStatus.ERROR,
       });
 
-      await service.handleWebhook('sig', [
-        {
-          event: 'transaction.updated',
-          data: { transaction: { id: 999, status: 'ERROR' } },
-        },
-      ]);
+      await service.handleWebhook(validSignature, events);
 
       const savedPayment = mockPaymentRepo.save.mock.calls[0][0];
       expect(savedPayment.status).toBe(PaymentStatus.ERROR);
     });
 
     it('should map unknown status to ERROR', async () => {
+      const events = [
+        {
+          event: 'transaction.updated',
+          data: { transaction: { id: 111, status: 'UNKNOWN' } },
+        },
+      ];
+      const validSignature = await mockComputeSignature(events);
+
       const paymentWithWompiId = { ...mockPayment, wompi_transaction_id: '111' };
       mockPaymentRepo.findOneBy.mockResolvedValue(paymentWithWompiId);
       mockPaymentRepo.save.mockResolvedValue({
@@ -355,12 +422,7 @@ describe('PaymentsService', () => {
         status: PaymentStatus.ERROR,
       });
 
-      await service.handleWebhook('sig', [
-        {
-          event: 'transaction.updated',
-          data: { transaction: { id: 111, status: 'UNKNOWN' } },
-        },
-      ]);
+      await service.handleWebhook(validSignature, events);
 
       const savedPayment = mockPaymentRepo.save.mock.calls[0][0];
       expect(savedPayment.status).toBe(PaymentStatus.ERROR);
