@@ -64,8 +64,10 @@ export default function BottomTabs() {
                 component={PaymentHistoryScreen}
                 options={
                     {
-                        headerShown: false,
+                        headerShown: true,
                         title: 'Historial',
+                        headerStyle: styles.headerStyle,
+                        headerTitleStyle: styles.titleStyle2,
                     }}
             />
 
