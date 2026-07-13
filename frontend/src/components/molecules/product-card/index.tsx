@@ -8,14 +8,19 @@ import { images } from '../../../assets';
 import { formatCurrencyPrice } from '../../../utils';
 import { useAppDispatch } from '../../../hooks';
 import { addItem } from '../../../store/sagas/cart/reducer';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../../../types/navigation';
 
 interface Props {
     product: Product;
 }
 
+type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 export default function ProductCard({ product }: Props) {
     const dispatch = useAppDispatch();
+    const navigation = useNavigation<Nav>();
 
     const { id, name, price, image_url, stock } = product;
 
@@ -28,8 +33,12 @@ export default function ProductCard({ product }: Props) {
         }));
     };
 
+    const navigateToProductDetail = () => {
+        navigation.navigate('ProductDetail', { id });
+    };
+
     return (
-        <TouchableOpacity style={styles.container}>
+        <TouchableOpacity onPress={navigateToProductDetail} style={styles.container}>
             <ImageComponent
                 source={image_url ?? images.product_placeholder}
                 style={styles.image}
@@ -39,7 +48,6 @@ export default function ProductCard({ product }: Props) {
             {stock > 0 && (
                 <TouchableOpacity style={styles.addButton} onPress={handleAddToCart}>
                     <Ionicons name="cart-outline" size={20} color="#fff" />
-                    {/* <Text style={styles.addButtonText}>Agregar</Text> */}
                 </TouchableOpacity>
             )}
         </TouchableOpacity>

@@ -5,6 +5,7 @@ import { RootStackParamList } from '../types/navigation';
 import { colors } from '../utils/colors';
 import BottomTabs from './bottom-tabs';
 import { CartScreen, ProductDetailScreen, SplashScreen } from '../screens';
+import { styles } from './bottom-tabs/style';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -27,8 +28,12 @@ export default function RootStack() {
         name="ProductDetail"
         component={ProductDetailScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
+          title: 'Detalle del producto',
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.titleStyle2,
         }} />
+
     </Stack.Navigator>
   );
 }
