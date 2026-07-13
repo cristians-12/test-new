@@ -15,6 +15,7 @@ export const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+        maxWidth: '50%',
         margin: 5,
         position: 'relative',
     },
