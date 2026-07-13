@@ -123,10 +123,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 40,
   },
-  emptyIcon: {
-    fontSize: 48,
-    marginBottom: 16,
-  },
   emptyTitle: {
     fontSize: 18,
     fontFamily: fontFamilies.satoshi.bold,
@@ -138,16 +134,5 @@ export const styles = StyleSheet.create({
     fontFamily: fontFamilies.satoshi.regular,
     color: '#999',
     textAlign: 'center',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    fontSize: 14,
-    fontFamily: fontFamilies.satoshi.regular,
-    color: '#999',
-    marginTop: 12,
   },
 });

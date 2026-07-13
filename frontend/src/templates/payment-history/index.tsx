@@ -1,20 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { styles } from './styles';
-import { useAppDispatch, useAppSelector } from '../../hooks';
-import { fetchPaymentHistory, PaymentResponse } from '../../store/sagas/payment/reducer';
+import { useAppSelector } from '../../hooks';
+import { PaymentResponse } from '../../store/sagas/payment/reducer';
 import { PAYMENT_STATUS } from '../../constants';
 import { formatCurrencyPrice } from '../../utils';
 
 export default function PaymentHistoryTemplate() {
-  const dispatch = useAppDispatch();
-  const { payments, historyLoading, error } = useAppSelector(
-    (state) => state.payment,
-  );
-
-  useEffect(() => {
-    dispatch(fetchPaymentHistory());
-  }, [dispatch]);
+  const payments = useAppSelector((state) => state.payment.payments);
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -78,14 +71,18 @@ export default function PaymentHistoryTemplate() {
     );
   };
 
-  if (historyLoading && payments.length === 0) {
+  if (payments.length === 0) {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Historial de pagos</Text>
+          <Text style={styles.headerSubtitle}>0 pagos registrados</Text>
         </View>
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Cargando pagos...</Text>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyTitle}>Sin pagos registrados</Text>
+          <Text style={styles.emptySubtitle}>
+            Cuando realices un pago, aparecerá aquí.
+          </Text>
         </View>
       </View>
     );
@@ -99,30 +96,13 @@ export default function PaymentHistoryTemplate() {
           {payments.length} {payments.length === 1 ? 'pago registrado' : 'pagos registrados'}
         </Text>
       </View>
-
-      {error ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyIcon}>!</Text>
-          <Text style={styles.emptyTitle}>Error al cargar pagos</Text>
-          <Text style={styles.emptySubtitle}>{error}</Text>
-        </View>
-      ) : payments.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyIcon}>No payments</Text>
-          <Text style={styles.emptyTitle}>Sin pagos registrados</Text>
-          <Text style={styles.emptySubtitle}>
-            Cuando realices un pago, aparecerá aquí.
-          </Text>
-        </View>
-      ) : (
-        <FlatList
-          data={payments}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderItem}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+      <FlatList
+        data={payments}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 }
