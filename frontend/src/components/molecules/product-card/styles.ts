@@ -15,6 +15,7 @@ export const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+        maxWidth: '50%',
         margin: 5,
         position: 'relative',
     },
@@ -37,6 +38,9 @@ export const styles = StyleSheet.create({
         bottom: 50,
         right: 5
 
+    },
+    addButtonAdded: {
+        backgroundColor: '#2ecc71',
     },
     addButtonText: {
         color: '#fff',

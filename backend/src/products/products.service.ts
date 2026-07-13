@@ -24,7 +24,7 @@ export class ProductsService {
 
     if (search) {
       qb.andWhere(
-        '(product.name ILIKE :search OR product.description ILIKE :search)',
+        '(unaccent(product.name) ILIKE unaccent(:search) OR unaccent(product.description) ILIKE unaccent(:search))',
         { search: `%${search}%` },
       );
     }

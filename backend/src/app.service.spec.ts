@@ -1,12 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppService } from './app.service';
+import { DataSource } from 'typeorm';
 
 describe('AppService', () => {
   let service: AppService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AppService],
+      providers: [
+        AppService,
+        { provide: DataSource, useValue: { query: jest.fn() } },
+      ],
     }).compile();
 
     service = module.get<AppService>(AppService);
