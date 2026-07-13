@@ -41,6 +41,12 @@ export const styles = StyleSheet.create({
         borderRadius: 10,
         marginTop: 10
     },
+    buttonSecondary: {
+        backgroundColor: colors.secondary,
+        padding: 10,
+        borderRadius: 10,
+        marginTop: 10
+    },
     titlebtn:{
         color: 'white',
         fontSize: 15,

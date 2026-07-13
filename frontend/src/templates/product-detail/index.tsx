@@ -7,6 +7,7 @@ import { styles } from './styles';
 import { Text, View } from 'react-native';
 import { formatCurrencyPrice } from '../../utils';
 import ButtonComponent from '../../components/molecules/button-component';
+import { colors } from '../../utils/colors';
 
 interface Props {
   id: string | number;
@@ -45,8 +46,9 @@ export default function ProductDetailTemplate({ id }: Props) {
       />
       <View style={styles.container}>
         <Text style={styles.title}>{name}</Text>
-        <Text style={[styles.boldText, { fontSize: 20 }]}>${formatCurrencyPrice(price.toString())}</Text>
-        <Text style={styles.stockText}>Stock disponible:</Text>
+        <Text style={[styles.boldText, { color: colors.secondary }]}>{category.name}</Text>
+        <Text style={[styles.boldText, { fontSize: 20, marginTop: 10 }]}>${formatCurrencyPrice(price.toString())}</Text>
+        <Text style={styles.stockText}>Stock disponible</Text>
         <Text style={styles.lightText}>Cantidad:
           <Text style={styles.mediumText}>{stock}</Text>
         </Text>
@@ -56,6 +58,14 @@ export default function ProductDetailTemplate({ id }: Props) {
           onPress={() => console.log('Comprar ahora')}
           style={styles.button}
           titleStyle={styles.titlebtn}
+        />
+        <ButtonComponent
+          title='Agregar al carrito'
+          onPress={() => console.log('Agregar al carrito')}
+          style={styles.buttonSecondary}
+          titleStyle={styles.titlebtn}
+          icon="cart-outline"
+          iconColor="white"
         />
       </View>
     </>
