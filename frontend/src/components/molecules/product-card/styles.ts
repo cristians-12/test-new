@@ -38,6 +38,9 @@ export const styles = StyleSheet.create({
         right: 5
 
     },
+    addButtonAdded: {
+        backgroundColor: '#2ecc71',
+    },
     addButtonText: {
         color: '#fff',
         fontSize: 14,
