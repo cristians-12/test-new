@@ -34,7 +34,19 @@ export default function RootStack() {
           headerStyle: styles.headerStyle,
           headerTitleStyle: styles.titleStyle2,
           headerLeft: () => <CustomBackButton color="white" />,
-        }} />
+        }}
+      />
+      <Stack.Screen
+        name="ProductDetail"
+        component={ProductDetailScreen}
+        options={{
+          headerShown: true,
+          title: 'Detalle del producto',
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.titleStyle2,
+          headerLeft: () => <CustomBackButton color="white" />,
+        }}
+      />
 
     </Stack.Navigator>
   );

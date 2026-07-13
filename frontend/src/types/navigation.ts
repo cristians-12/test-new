@@ -14,6 +14,10 @@ export type RootStackParamList = {
     },
     Home: undefined;
     Cart: undefined;
+    Payment:{
+        navigation: NavigationProp<RootStackParamList>;
+        id: string | number;
+    }
 };
 
 export type BottomTabsParamList = {
