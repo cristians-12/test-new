@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
 
@@ -20,6 +21,12 @@ describe('ProductsController', () => {
     updated_at: new Date('2025-01-01'),
   };
 
+  const mockCacheManager = {
+    get: jest.fn().mockResolvedValue(null),
+    set: jest.fn().mockResolvedValue(undefined),
+    clear: jest.fn().mockResolvedValue(undefined),
+  };
+
   const mockProductsService = {
     findAll: jest.fn(),
     findOne: jest.fn(),
@@ -29,12 +36,18 @@ describe('ProductsController', () => {
   };
 
   beforeEach(async () => {
+    mockCacheManager.get.mockResolvedValue(null);
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProductsController],
       providers: [
         {
           provide: ProductsService,
           useValue: mockProductsService,
+        },
+        {
+          provide: CACHE_MANAGER,
+          useValue: mockCacheManager,
         },
       ],
     }).compile();

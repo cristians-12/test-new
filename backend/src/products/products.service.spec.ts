@@ -115,7 +115,7 @@ describe('ProductsService', () => {
       await service.findAll({ search: 'laptop' });
 
       expect(mockQb.andWhere).toHaveBeenCalledWith(
-        '(product.name ILIKE :search OR product.description ILIKE :search)',
+        '(unaccent(product.name) ILIKE unaccent(:search) OR unaccent(product.description) ILIKE unaccent(:search))',
         { search: '%laptop%' },
       );
     });
