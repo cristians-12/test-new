@@ -20,6 +20,7 @@ export type RootStackParamList = {
 export type BottomTabsParamList = {
     HomeTab: undefined;
     CartTab: undefined;
+    PaymentHistoryTab: undefined;
 };
 
 export type CustomNavigationProps = CompositeNavigationProp<

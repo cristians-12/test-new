@@ -14,7 +14,7 @@ jest.mock('../../../../api/api', () => ({
 import apiClient from '../../../../api/api';
 
 const mockPaymentPayload = {
-  product_id: 1,
+  items: [{ product_id: 1, quantity: 2 }],
   customer_email: 'demo@example.com',
   card_number: '4111111111111111',
   cvv: '123',
@@ -88,8 +88,9 @@ describe('processPaymentSaga', () => {
 });
 
 describe('watchPayment', () => {
-  it('should yield takeLatest for processPayment', () => {
+  it('should yield takeLatest for processPayment and pollPaymentStatus', () => {
     const gen = watchPayment();
+    expect(gen.next().value.type).toBe('FORK');
     expect(gen.next().value.type).toBe('FORK');
     expect(gen.next().done).toBe(true);
   });

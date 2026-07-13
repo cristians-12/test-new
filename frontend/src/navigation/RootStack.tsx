@@ -45,7 +45,11 @@ export default function RootStack() {
         name="Payment"
         component={PaymentScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
+          title: 'Pago',
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.titleStyle2,
+          headerLeft: () => <CustomBackButton color="white" />,
         }}
       />
     </Stack.Navigator>

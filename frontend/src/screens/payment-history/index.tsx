@@ -1,14 +1,11 @@
 import { styles } from './styles';
-import { PaymentTemplate } from '../../templates';
+import { PaymentHistoryTemplate } from '../../templates';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
-
-export default function PaymentScreen() {
-
+export default function PaymentHistoryScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <PaymentTemplate />
+      <PaymentHistoryTemplate />
     </SafeAreaView>
   );
 }
