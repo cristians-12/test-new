@@ -22,16 +22,16 @@ export class ProductsController {
   constructor(
     private readonly productsService: ProductsService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  ) { }
 
   @Get()
   async findAll(@Query() query: QueryProductDto) {
     const cacheKey = `products:all:${JSON.stringify(query)}`;
     const cached = await this.cacheManager.get(cacheKey);
     if (cached) return cached;
-
+    console.log('cache', cacheKey, 'hit', !!cached);
     const result = await this.productsService.findAll(query);
-    await this.cacheManager.set(cacheKey, result, 60);
+    await this.cacheManager.set(cacheKey, result, 60000);
     return result;
   }
 
@@ -42,7 +42,7 @@ export class ProductsController {
     if (cached) return cached;
 
     const product = await this.productsService.findOne(id);
-    await this.cacheManager.set(cacheKey, product, 60);
+    await this.cacheManager.set(cacheKey, product, 60000);
     return product;
   }
 
