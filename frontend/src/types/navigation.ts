@@ -8,7 +8,10 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 export type RootStackParamList = {
     Splash: {
         navigation: NavigationProp<RootStackParamList>;
-    };
+    },
+    ProductDetail: {
+        id: string | number;
+    },
     Home: undefined;
     Cart: undefined;
 };

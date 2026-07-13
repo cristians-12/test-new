@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { colors } from "../../../utils/colors";
+import { colors } from "../../utils/colors";
 
 export const styles = StyleSheet.create({
     container: {
@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
         color: 'white',
         fontSize: 15
     },
-    image:{
+    image: {
         width: '50%',
         height: '50%',
     }

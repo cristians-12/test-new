@@ -6,6 +6,7 @@ module.exports = {
   collectCoverageFrom: [
     'src/store/sagas/**/reducer.ts',
     'src/store/sagas/**/saga.ts',
+    'src/store/middleware/**/*.ts',
     'src/utils/functions/**/*.ts',
     '!src/**/__tests__/**',
   ],

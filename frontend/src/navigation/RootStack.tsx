@@ -1,11 +1,13 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from '../screens/home';
-import SplashScreen from '../screens/splash-screen';
+
 import { RootStackParamList } from '../types/navigation';
 import { colors } from '../utils/colors';
 import BottomTabs from './bottom-tabs';
-import CartScreen from '../screens/cart';
+import { CartScreen, ProductDetailScreen, SplashScreen } from '../screens';
+import { styles } from './bottom-tabs/style';
+import CustomBackButton from '../components/atoms/custom-back-button';
+
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -24,11 +26,16 @@ export default function RootStack() {
           headerShown: false,
         }} />
       <Stack.Screen
-        name="Cart"
-        component={CartScreen}
+        name="ProductDetail"
+        component={ProductDetailScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
+          title: 'Detalle del producto',
+          headerStyle: styles.headerStyle,
+          headerTitleStyle: styles.titleStyle2,
+          headerLeft: () => <CustomBackButton color="white" />,
         }} />
+
     </Stack.Navigator>
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Entypo from 'react-native-vector-icons/Entypo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { styles } from './styles';
 
 interface Props {
@@ -20,8 +20,8 @@ export default function CustomBackButton({
             onPress={() => navigation.goBack()}
             style={styles.icon}
         >
-            <Entypo
-                name="chevron-left"
+            <Ionicons
+                name="chevron-back"
                 size={size}
                 color={color}
             />

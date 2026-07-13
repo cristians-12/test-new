@@ -334,22 +334,22 @@ pnpm test:e2e
 | Métrica | Resultado |
 |---|---|
 | Test Suites | 7 pasaron, 7 total |
-| Tests | **118 pasaron**, 118 total |
-| Cobertura (Statements) | **99.41%** |
-| Cobertura (Branches) | **95%** |
-| Cobertura (Functions) | **98.43%** |
-| Cobertura (Lines) | **99.39%** |
+| Tests | **125 pasaron**, 125 total |
+| Cobertura (Statements) | **99.44%** |
+| Cobertura (Branches) | **95.23%** |
+| Cobertura (Functions) | **98.50%** |
+| Cobertura (Lines) | **99.42%** |
 
 Cobertura por archivo:
 
 | Archivo | Statements | Branches | Functions | Lines |
 |---|---|---|---|---|
 | cart/reducer.ts | 100% | 100% | 100% | 100% |
-| cart/saga.ts | 100% | 100% | 100% | 100% |
 | categories/reducer.ts | 100% | 100% | 100% | 100% |
 | categories/saga.ts | 100% | 100% | 100% | 100% |
 | products/reducer.ts | 100% | 100% | 100% | 100% |
 | products/saga.ts | 100% | 100% | 100% | 100% |
+| cartPersist.ts | 100% | 100% | 100% | 100% |
 | formatPrice.ts | 85.71% | 0% | 66.66% | 85.71% |
 
 ```bash

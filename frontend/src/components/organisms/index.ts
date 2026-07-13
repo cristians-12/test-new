@@ -1,3 +1,2 @@
-export { default as Header } from './Header';
-export { default as Footer } from './Footer';
-export { default as LoginForm } from './LoginForm';
+export {default as CustomSearchHeader} from './custom-search-header';
+export {default as CustomBottomTab} from './custom-bottom-tab';
