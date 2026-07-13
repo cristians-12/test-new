@@ -4,10 +4,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { colors } from '../utils/colors';
 import BottomTabs from './bottom-tabs';
-import { CartScreen, ProductDetailScreen, SplashScreen } from '../screens';
+import {
+  CartScreen,
+  ProductDetailScreen,
+  SplashScreen,
+  PaymentScreen,
+} from '../screens';
 import { styles } from './bottom-tabs/style';
 import CustomBackButton from '../components/atoms/custom-back-button';
-
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -24,7 +28,8 @@ export default function RootStack() {
         component={BottomTabs}
         options={{
           headerShown: false,
-        }} />
+        }}
+      />
       <Stack.Screen
         name="ProductDetail"
         component={ProductDetailScreen}
@@ -34,8 +39,15 @@ export default function RootStack() {
           headerStyle: styles.headerStyle,
           headerTitleStyle: styles.titleStyle2,
           headerLeft: () => <CustomBackButton color="white" />,
-        }} />
-
+        }}
+      />
+      <Stack.Screen
+        name="Payment"
+        component={PaymentScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 }

@@ -3,6 +3,7 @@ import createSagaMiddleware from 'redux-saga';
 import cartReducer from './sagas/cart/reducer';
 import productsReducer from './sagas/products/reducer';
 import categoriesReducer from './sagas/categories/reducer';
+import paymentReducer from './sagas/payment/reducer';
 import { cartPersistMiddleware } from './middleware/cartPersist';
 import rootSaga from './sagas';
 
@@ -13,6 +14,7 @@ export const store = configureStore({
     cart: cartReducer,
     products: productsReducer,
     categories: categoriesReducer,
+    payment: paymentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: false })
