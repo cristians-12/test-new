@@ -51,5 +51,10 @@ export const styles = StyleSheet.create({
         color: 'white',
         fontSize: 15,
         fontFamily: fontFamilies.satoshi.medium
+    },
+    regularText : {
+        color: 'black',
+        fontSize: 15,
+        fontFamily: fontFamilies.satoshi.regular
     }
 });

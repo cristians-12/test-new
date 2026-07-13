@@ -5,6 +5,7 @@ import { ImageComponent, TransparentLoading } from '../../components';
 import { images } from '../../assets';
 import { styles } from './styles';
 import { Text, View } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { formatCurrencyPrice } from '../../utils';
 import ButtonComponent from '../../components/molecules/button-component';
 import { colors } from '../../utils/colors';
@@ -49,9 +50,14 @@ export default function ProductDetailTemplate({ id }: Props) {
         <Text style={[styles.boldText, { color: colors.secondary }]}>{category.name}</Text>
         <Text style={[styles.boldText, { fontSize: 20, marginTop: 10 }]}>${formatCurrencyPrice(price.toString())}</Text>
         <Text style={styles.stockText}>Stock disponible</Text>
-        <Text style={styles.lightText}>Cantidad:
+        <Text style={styles.lightText}>Cantidad: {' '}
           <Text style={styles.mediumText}>{stock}</Text>
         </Text>
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 10, gap: 6 }}>
+          <Ionicons name="shield-checkmark-outline" size={20} color={colors.secondary} />
+          <Text style={styles.regularText}>Tu compra está protegida</Text>
+        </View>
 
         <ButtonComponent
           title='Comprar ahora'
