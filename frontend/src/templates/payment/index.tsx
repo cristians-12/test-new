@@ -1,14 +1,13 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles } from './styles';
 
 import { PAYMENT_STATUS, CARD_BRANDS } from '../../constants';
 import { detectCardType, formatCardNumber, formatExpiry, isValidCVV, isValidEmail, isValidExpiry, luhnCheck } from '../../utils/validation/cardUtils';
 import { useNavigation } from '@react-navigation/native';
-import { useAppDispatch, useAppSelector } from '../../hooks';
+import { useAppDispatch, useAppSelector, usePayment } from '../../hooks';
 import { StackNavigation } from '../../types/navigation';
-import { clearPayment, pollPaymentStatus, processPayment } from '../../store/sagas/payment/reducer';
-import { clearCart } from '../../store/sagas/cart/reducer';
+import { processPayment } from '../../store/sagas/payment/reducer';
 import ButtonComponent from '../../components/molecules/button-component';
 import { formatCurrencyPrice } from '../../utils';
 
@@ -18,9 +17,20 @@ export default function PaymentTemplate() {
     const navigation = useNavigation<StackNavigation>();
     const dispatch = useAppDispatch();
     const items = useAppSelector((state) => state.cart.items);
-    const { loading, error, currentPayment } = useAppSelector(
-        (state) => state.payment,
-    );
+
+    const { currentPayment, loading, error, resetPayment } = usePayment({
+        onApproved: () => {
+            setTimeout(() => {
+                resetPayment();
+                navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+            }, 1500);
+        },
+    });
+
+    const handleGoHome = () => {
+        resetPayment();
+        navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+    };
 
     const total = items.reduce(
         (sum, item) => sum + item.price * item.quantity,
@@ -149,43 +159,11 @@ export default function PaymentTemplate() {
         }
     }, [error]);
 
-    const pollRef = useRef<ReturnType<typeof setInterval>>();
-
-    useEffect(() => {
-        if (step === 'status' && currentPayment && currentPayment.status === 'PENDING') {
-            pollRef.current = setInterval(() => {
-                dispatch(pollPaymentStatus(currentPayment.id));
-            }, 10000);
-        }
-        return () => {
-            if (pollRef.current) clearInterval(pollRef.current);
-        };
-    }, [step, currentPayment?.status, currentPayment?.id]);
-
-    const prevStatusRef = useRef(currentPayment?.status);
-    useEffect(() => {
-        if (currentPayment?.status && currentPayment.status !== prevStatusRef.current) {
-            prevStatusRef.current = currentPayment.status;
-            if (currentPayment.status === 'APPROVED') {
-                globalThis.toastRef?.show('Pago confirmado', { type: 'success' });
-            } else if (currentPayment.status === 'DECLINED' || currentPayment.status === 'ERROR') {
-                globalThis.toastRef?.show('Pago rechazado', { type: 'danger' });
-            }
-            if (pollRef.current) clearInterval(pollRef.current);
-        }
-    }, [currentPayment?.status]);
-
-    const handleGoHome = () => {
-        dispatch(clearPayment());
-        dispatch(clearCart());
-        navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-    };
-
     const handleBack = () => {
         if (step === 'summary') {
             setStep('form');
         } else if (step === 'status') {
-            dispatch(clearPayment());
+            resetPayment();
             setStep('form');
         }
     };
