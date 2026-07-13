@@ -1,50 +1,21 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { createKeyv } from '@keyv/redis';
-import { CacheModule } from '@nestjs/cache-manager';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProductsModule } from './products/products.module';
-import { CategoriesModule } from './categories/categories.module';
-import { PaymentsModule } from './payments/payments.module';
+import { DatabaseModule } from './config/typeorm/typeorm.module';
+import { CacheConfigModule } from './config/cache/cache.module';
+import { ProductModule } from './modules/product/product.module';
+import { CategoryModule } from './modules/category/category.module';
+import { PaymentModule } from './modules/payment/payment.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get('DB_HOST', 'localhost'),
-        port: config.get<number>('DB_PORT', 5432),
-        username: config.get('DB_USER', 'root'),
-        password: config.get('DB_PASSWORD', 'root_secret'),
-        database: config.get('DB_NAME', 'test_db'),
-        autoLoadEntities: true,
-        synchronize: true,
-      }),
-    }),
-
-    CacheModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      isGlobal: true,
-      useFactory: (config: ConfigService) => ({
-        stores: [
-          createKeyv(
-            `redis://${config.get('REDIS_HOST', 'localhost')}:${config.get<number>('REDIS_PORT', 6379)}`,
-          ),
-        ],
-        ttl: 60000,
-      }),
-    }),
-
-    CategoriesModule,
-    ProductsModule,
-    PaymentsModule,
+    DatabaseModule,
+    CacheConfigModule,
+    CategoryModule,
+    ProductModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

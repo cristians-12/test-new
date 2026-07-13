@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
-import { Category } from './categories/category.entity';
-import { Product } from './products/product.entity';
+import { CategoryOrmEntity } from './adapters/outbound/persistence/typeorm/category.orm-entity';
+import { ProductOrmEntity } from './adapters/outbound/persistence/typeorm/product.orm-entity';
 
 const dataSource = new DataSource({
   type: 'postgres',
@@ -9,7 +9,7 @@ const dataSource = new DataSource({
   username: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || 'root_secret',
   database: process.env.DB_NAME || 'test_db',
-  entities: [Category, Product],
+  entities: [CategoryOrmEntity, ProductOrmEntity],
   synchronize: true,
 });
 
@@ -102,8 +102,8 @@ async function seed() {
 
   await dataSource.query('CREATE EXTENSION IF NOT EXISTS unaccent');
 
-  const categoryRepo = dataSource.getRepository(Category);
-  const productRepo = dataSource.getRepository(Product);
+  const categoryRepo = dataSource.getRepository(CategoryOrmEntity);
+  const productRepo = dataSource.getRepository(ProductOrmEntity);
 
   for (const cat of categories) {
     const exists = await categoryRepo.findOneBy({ slug: cat.slug });
