@@ -5,9 +5,10 @@ import { styles } from './styles';
 import { PAYMENT_STATUS, CARD_BRANDS } from '../../constants';
 import { detectCardType, formatCardNumber, formatExpiry, isValidCVV, isValidEmail, isValidExpiry, luhnCheck } from '../../utils/validation/cardUtils';
 import { useNavigation } from '@react-navigation/native';
-import { useAppDispatch, useAppSelector, usePayment } from '../../hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import { StackNavigation } from '../../types/navigation';
-import { processPayment } from '../../store/sagas/payment/reducer';
+import { processPayment, clearPayment } from '../../store/sagas/payment/reducer';
+import { clearCart } from '../../store/sagas/cart/reducer';
 import ButtonComponent from '../../components/molecules/button-component';
 import { formatCurrencyPrice } from '../../utils';
 
@@ -17,18 +18,13 @@ export default function PaymentTemplate() {
     const navigation = useNavigation<StackNavigation>();
     const dispatch = useAppDispatch();
     const items = useAppSelector((state) => state.cart.items);
-
-    const { currentPayment, loading, error, resetPayment } = usePayment({
-        onApproved: () => {
-            setTimeout(() => {
-                resetPayment();
-                navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-            }, 1500);
-        },
-    });
+    const { loading, error, currentPayment } = useAppSelector(
+        (state) => state.payment,
+    );
 
     const handleGoHome = () => {
-        resetPayment();
+        dispatch(clearPayment());
+        dispatch(clearCart());
         navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
     };
 
@@ -163,7 +159,7 @@ export default function PaymentTemplate() {
         if (step === 'summary') {
             setStep('form');
         } else if (step === 'status') {
-            resetPayment();
+            dispatch(clearPayment());
             setStep('form');
         }
     };

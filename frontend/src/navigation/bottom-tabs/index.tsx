@@ -6,6 +6,7 @@ import CustomBottomTab from '../../components/organisms/custom-bottom-tab';
 import { colors } from '../../utils/colors';
 import HomeScreen from '../../screens/home';
 import CartScreen from '../../screens/cart';
+import PaymentHistoryScreen from '../../screens/payment-history';
 import { styles } from './style';
 
 
@@ -27,6 +28,8 @@ export default function BottomTabs() {
                 tabBarHideOnKeyboard: true,
                 tabBarIcon: ({ color, size }) => {
                     let iconName: string = 'home';
+                    if (route.name === 'CartTab') iconName = 'cart';
+                    else if (route.name === 'PaymentHistoryTab') iconName = 'time';
                     return (
                         <Ionicons name={iconName} size={size} color={color} />
                     );
@@ -40,7 +43,6 @@ export default function BottomTabs() {
                 options={
                     {
                         headerShown: false,
-                        // header: () => <CustomHeader />,
                         title: 'Inicio'
                     }}
 
@@ -51,11 +53,19 @@ export default function BottomTabs() {
                 options={
                     {
                         headerShown: true,
-                        // header: () => <CustomHeader />,
                         title: 'Carrito',
                         headerStyle: styles.headerStyle,
                         headerTitleStyle: styles.titleStyle2
 
+                    }}
+            />
+            <Tab.Screen
+                name='PaymentHistoryTab'
+                component={PaymentHistoryScreen}
+                options={
+                    {
+                        headerShown: false,
+                        title: 'Historial',
                     }}
             />
 
