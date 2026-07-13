@@ -19,6 +19,7 @@ export interface PaymentResponse {
   status: string;
   product_id: number | null;
   product_name: string | null;
+  product_quantity: number[] | null;
   created_at: string;
 }
 

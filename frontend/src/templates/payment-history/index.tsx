@@ -43,12 +43,22 @@ export default function PaymentHistoryTemplate() {
     const colors = getStatusColors(item.status);
     const amount = (Number(item.amount_in_cents) / 100).toString();
 
+    const productNames = item.product_name?.split(', ') || [];
+    const productQuantities = item.product_quantity || [];
+
     return (
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <Text style={styles.productName} numberOfLines={3}>
-            {item.product_name || 'Producto'}
-          </Text>
+          <View style={{ flex: 1 }}>
+            {productNames.map((name, index) => (
+              <Text key={index} style={styles.productName} numberOfLines={1}>
+                {name}{productQuantities[index] ? ` x${productQuantities[index]}` : ''}
+              </Text>
+            ))}
+            {productNames.length === 0 && (
+              <Text style={styles.productName}>Producto</Text>
+            )}
+          </View>
           <View style={[styles.statusBadge, colors.badge]}>
             <Text style={[styles.statusText, colors.text]}>
               {statusInfo.display}

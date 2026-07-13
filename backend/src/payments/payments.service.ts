@@ -62,7 +62,8 @@ export class PaymentsService {
       0,
     );
 
-    const productNames = products.map(({ product, quantity }) => `${product.name} x${quantity}`).join(', ');
+    const productNames = products.map(({ product }) => product.name).join(', ');
+    const productQuantities = products.map(({ quantity }) => quantity);
 
     const payment = this.paymentRepo.create({
       reference,
@@ -71,6 +72,7 @@ export class PaymentsService {
       customer_email: dto.customer_email,
       product_id: products[0].product.id,
       product_name: productNames,
+      product_quantity: productQuantities,
       status: PaymentStatus.PENDING,
     });
 

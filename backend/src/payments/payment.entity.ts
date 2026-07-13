@@ -44,6 +44,9 @@ export class Payment {
   product_name!: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
+  product_quantity!: number[] | null;
+
+  @Column({ type: 'jsonb', nullable: true })
   payment_method!: Record<string, any> | null;
 
   @Column({ type: 'jsonb', nullable: true })
