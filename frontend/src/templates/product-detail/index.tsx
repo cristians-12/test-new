@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { fetchProductById } from '../../store/sagas/products/reducer';
-import { TransparentLoading } from '../../components';
+import { ImageComponent, TransparentLoading } from '../../components';
+import { images } from '../../assets';
+import { styles } from './styles';
+import { Text, View } from 'react-native';
 
 interface Props {
   id: string | number;
@@ -21,9 +24,27 @@ export default function ProductDetailTemplate({ id }: Props) {
     return <TransparentLoading />
   }
 
+  const {
+    name,
+    image_url,
+    category,
+    description,
+    stock,
+    price,
+    is_active,
+    id: productId
+  } = selected!;
+
   return (
     <>
+      <ImageComponent
+        source={image_url ?? images.product_placeholder}
+        style={styles.image}
+      />
+      <View style={styles.container}>
+        <Text style={styles.title}>{name}</Text>
 
+      </View>
     </>
   );
 }
