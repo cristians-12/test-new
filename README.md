@@ -183,13 +183,13 @@ docker compose down -v
 
 ```bash
 cd frontend
-npm install
+pnpm install
 ```
 
 2. **Iniciar el bundler Metro**
 
 ```bash
-npm start
+pnpm start
 ```
 
 3. **Ejecutar en el emulador de Android**
@@ -197,7 +197,7 @@ npm start
 Asegúrese de que un emulador esté corriendo, luego:
 
 ```bash
-npm run android
+pnpm android
 ```
 
 > El cliente API se conecta a `http://10.0.2.2:3000/api` por defecto, que equivale a `localhost:3000` en la máquina host desde el emulador de Android.
@@ -244,7 +244,7 @@ pnpm test
 
 ```bash
 cd frontend
-npm test
+pnpm test
 ```
 
 | Módulo                | Tests |
