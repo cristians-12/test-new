@@ -30,6 +30,33 @@ import {
 import ButtonComponent from '../../components/molecules/button-component';
 import { styles } from './styles';
 
+const PAYMENT_STATUS: Record<string, { icon: string; title: string; subtitle: string; display: string }> = {
+  APPROVED: {
+    icon: '✓',
+    title: 'Pago aprobado',
+    subtitle: 'Tu transacción se ha completado exitosamente.',
+    display: 'Aprobado',
+  },
+  PENDING: {
+    icon: '⏳',
+    title: 'Pago pendiente',
+    subtitle: 'Tu transacción está siendo procesada.',
+    display: 'Pendiente',
+  },
+  DECLINED: {
+    icon: '✕',
+    title: 'Pago rechazado',
+    subtitle: 'No se pudo completar la transacción.',
+    display: 'Rechazado',
+  },
+  ERROR: {
+    icon: '✕',
+    title: 'Pago rechazado',
+    subtitle: 'No se pudo completar la transacción.',
+    display: 'Error',
+  },
+};
+
 const CARD_BRANDS: Record<string, { label: string }> = {
   visa: { label: 'VISA' },
   mastercard: { label: 'MasterCard' },
@@ -218,12 +245,12 @@ export default function PaymentScreen() {
                     : 'TARJETA'}
                 </Text>
                 {cardBrandImage && (
-                <View style={styles.cardBrandBadge}>
-                  <Text style={styles.cardBrandBadgeText}>
-                    {cardBrandImage}
-                  </Text>
-                </View>
-              )}
+                  <View style={styles.cardBrandBadge}>
+                    <Text style={styles.cardBrandBadgeText}>
+                      {cardBrandImage}
+                    </Text>
+                  </View>
+                )}
               </View>
               <Text style={styles.cardPreviewNumber}>
                 {cardNumber || '**** **** **** ****'}
@@ -397,66 +424,42 @@ export default function PaymentScreen() {
         </View>
       )}
 
-      {step === 'status' && currentPayment && (
-        <View style={styles.statusContainer}>
-          <View
-            style={[
-              styles.statusIconContainer,
-              currentPayment.status === 'APPROVED'
-                ? styles.statusSuccess
-                : currentPayment.status === 'PENDING'
-                  ? styles.statusPending
-                  : styles.statusError,
-            ]}>
-            <Text style={styles.statusIcon}>
-              {currentPayment.status === 'APPROVED'
-                ? '✓'
-                : currentPayment.status === 'PENDING'
-                  ? '⏳'
-                  : '✕'}
-            </Text>
-          </View>
-          <Text style={styles.statusTitle}>
-            {currentPayment.status === 'APPROVED'
-              ? 'Pago aprobado'
-              : currentPayment.status === 'PENDING'
-                ? 'Pago pendiente'
-                : 'Pago rechazado'}
-          </Text>
-          <Text style={styles.statusSubtitle}>
-            {currentPayment.status === 'APPROVED'
-              ? 'Tu transacción se ha completado exitosamente.'
-              : currentPayment.status === 'PENDING'
-                ? 'Tu transacción está siendo procesada.'
-                : 'No se pudo completar la transacción.'}
-          </Text>
+      {step === 'status' && currentPayment && (() => {
+        const info = PAYMENT_STATUS[currentPayment.status] || PAYMENT_STATUS.ERROR;
+        const isSuccess = currentPayment.status === 'APPROVED';
+        const isPending = currentPayment.status === 'PENDING';
+        return (
+          <View style={styles.statusContainer}>
+            <View
+              style={[
+                styles.statusIconContainer,
+                isSuccess ? styles.statusSuccess : isPending ? styles.statusPending : styles.statusError,
+              ]}>
+              <Text style={styles.statusIcon}>{info.icon}</Text>
+            </View>
+            <Text style={styles.statusTitle}>{info.title}</Text>
+            <Text style={styles.statusSubtitle}>{info.subtitle}</Text>
 
-          <View style={styles.statusDetails}>
-            <Text style={styles.statusDetailLabel}>Referencia</Text>
-            <Text style={styles.statusDetailValue}>
-              {currentPayment.reference}
-            </Text>
-            <Text style={styles.statusDetailLabel}>Monto</Text>
+            <View style={styles.statusDetails}>
+              <Text style={styles.statusDetailLabel}>Referencia</Text>
+              <Text style={styles.statusDetailValue}>{currentPayment.reference}</Text>
+              <Text style={styles.statusDetailLabel}>Monto</Text>
               <Text style={styles.statusDetailValue}>
-              ${formatCurrencyPrice(
-                String(currentPayment.amount_in_cents / 1000),
-              )}{' '}
-              {currentPayment.currency}
-            </Text>
-            <Text style={styles.statusDetailLabel}>Estado</Text>
-            <Text style={styles.statusDetailValue}>
-              {currentPayment.status}
-            </Text>
-          </View>
+                ${formatCurrencyPrice(String(currentPayment.amount_in_cents / 100))} {currentPayment.currency}
+              </Text>
+              <Text style={styles.statusDetailLabel}>Estado</Text>
+              <Text style={styles.statusDetailValue}>{info.display}</Text>
+            </View>
 
-          <ButtonComponent
-            title="Volver al inicio"
-            onPress={handleGoHome}
-            style={styles.primaryButton}
-            titleStyle={styles.primaryButtonText}
-          />
-        </View>
-      )}
+            <ButtonComponent
+              title="Volver al inicio"
+              onPress={handleGoHome}
+              style={styles.primaryButton}
+              titleStyle={styles.primaryButtonText}
+            />
+          </View>
+        );
+      })()}
     </SafeAreaView>
   );
 }
