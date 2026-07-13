@@ -1,11 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { FlatList, RefreshControl, Text, View } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { fetchProducts } from '../../store/sagas/products/reducer';
 import { fetchCategories } from '../../store/sagas/categories/reducer';
 import { styles } from './styles';
 import { CategoryPill, CustomSearchHeader, ProductCard, TransparentLoading } from '../../components';
 import { fontFamilies } from '../../utils/fonts';
+import { colors } from '../../utils/colors';
 
 export default function HomeTemplate() {
 
@@ -14,10 +15,18 @@ export default function HomeTemplate() {
     const { items: categories } = useAppSelector((state) => state.categories);
     const [search, setSearch] = useState('');
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+    const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
         dispatch(fetchCategories());
     }, [dispatch]);
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        dispatch(fetchProducts({ category_id: selectedCategoryId ?? undefined, search: search.trim() || undefined }));
+        dispatch(fetchCategories());
+        setTimeout(() => setRefreshing(false), 1000);
+    }, [dispatch, selectedCategoryId, search]);
 
     const productItems = useMemo(() => {
         return items.filter((item) => item.is_active && item.stock > 0);
@@ -68,6 +77,14 @@ export default function HomeTemplate() {
             }
             style={styles.productContainer}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    colors={[colors.primary]}
+                    tintColor={colors.primary}
+                />
+            }
         />
     );
 }
