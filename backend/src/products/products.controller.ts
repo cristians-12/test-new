@@ -8,7 +8,10 @@ import {
   Param,
   Query,
   ParseIntPipe,
+  Inject,
 } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -16,30 +19,51 @@ import { QueryProductDto } from './dto/query-product.dto';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   @Get()
-  findAll(@Query() query: QueryProductDto) {
-    return this.productsService.findAll(query);
+  async findAll(@Query() query: QueryProductDto) {
+    const cacheKey = `products:all:${JSON.stringify(query)}`;
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached;
+
+    const result = await this.productsService.findAll(query);
+    await this.cacheManager.set(cacheKey, result, 60);
+    return result;
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.productsService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const cacheKey = `products:${id}`;
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached;
+
+    const product = await this.productsService.findOne(id);
+    await this.cacheManager.set(cacheKey, product, 60);
+    return product;
   }
 
   @Post()
-  create(@Body() dto: CreateProductDto) {
-    return this.productsService.create(dto);
+  async create(@Body() dto: CreateProductDto) {
+    const result = await this.productsService.create(dto);
+    await this.cacheManager.clear();
+    return result;
   }
 
   @Put(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateProductDto) {
-    return this.productsService.update(id, dto);
+  async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateProductDto) {
+    const result = await this.productsService.update(id, dto);
+    await this.cacheManager.clear();
+    return result;
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.productsService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.productsService.remove(id);
+    await this.cacheManager.clear();
+    return result;
   }
 }
