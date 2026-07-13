@@ -46,7 +46,7 @@ export default function PaymentHistoryTemplate() {
     return (
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <Text style={styles.productName} numberOfLines={1}>
+          <Text style={styles.productName} numberOfLines={3}>
             {item.product_name || 'Producto'}
           </Text>
           <View style={[styles.statusBadge, colors.badge]}>
