@@ -100,6 +100,8 @@ async function seed() {
   await dataSource.initialize();
   console.log('DB connected');
 
+  await dataSource.query('CREATE EXTENSION IF NOT EXISTS unaccent');
+
   const categoryRepo = dataSource.getRepository(Category);
   const productRepo = dataSource.getRepository(Product);
 
