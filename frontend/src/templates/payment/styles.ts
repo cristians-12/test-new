@@ -137,6 +137,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 12,
     marginTop: 24,
+    paddingHorizontal: 20,
   },
   primaryButtonText: {
     color: '#fff',
