@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles } from './styles';
 
@@ -7,7 +7,7 @@ import { detectCardType, formatCardNumber, formatExpiry, isValidCVV, isValidEmai
 import { useNavigation } from '@react-navigation/native';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { StackNavigation } from '../../types/navigation';
-import { clearPayment, processPayment } from '../../store/sagas/payment/reducer';
+import { clearPayment, pollPaymentStatus, processPayment } from '../../store/sagas/payment/reducer';
 import { clearCart } from '../../store/sagas/cart/reducer';
 import ButtonComponent from '../../components/molecules/button-component';
 import { formatCurrencyPrice } from '../../utils';
@@ -122,7 +122,7 @@ export default function PaymentTemplate() {
         const cleaned = cardNumber.replace(/\s/g, '');
         dispatch(
             processPayment({
-                product_id: 1,
+                items: items.map((item) => ({ product_id: Number(item.id), quantity: item.quantity })),
                 customer_email: email,
                 card_number: cleaned,
                 cvv,
@@ -148,6 +148,32 @@ export default function PaymentTemplate() {
             globalThis.toastRef?.show(error, { type: 'danger' });
         }
     }, [error]);
+
+    const pollRef = useRef<ReturnType<typeof setInterval>>();
+
+    useEffect(() => {
+        if (step === 'status' && currentPayment && currentPayment.status === 'PENDING') {
+            pollRef.current = setInterval(() => {
+                dispatch(pollPaymentStatus(currentPayment.id));
+            }, 10000);
+        }
+        return () => {
+            if (pollRef.current) clearInterval(pollRef.current);
+        };
+    }, [step, currentPayment?.status, currentPayment?.id]);
+
+    const prevStatusRef = useRef(currentPayment?.status);
+    useEffect(() => {
+        if (currentPayment?.status && currentPayment.status !== prevStatusRef.current) {
+            prevStatusRef.current = currentPayment.status;
+            if (currentPayment.status === 'APPROVED') {
+                globalThis.toastRef?.show('Pago confirmado', { type: 'success' });
+            } else if (currentPayment.status === 'DECLINED' || currentPayment.status === 'ERROR') {
+                globalThis.toastRef?.show('Pago rechazado', { type: 'danger' });
+            }
+            if (pollRef.current) clearInterval(pollRef.current);
+        }
+    }, [currentPayment?.status]);
 
     const handleGoHome = () => {
         dispatch(clearPayment());
@@ -396,7 +422,7 @@ export default function PaymentTemplate() {
                             <Text style={styles.statusDetailValue}>{currentPayment.reference}</Text>
                             <Text style={styles.statusDetailLabel}>Monto</Text>
                             <Text style={styles.statusDetailValue}>
-                                ${formatCurrencyPrice(String(currentPayment.amount_in_cents / 1000))} {currentPayment.currency}
+                                ${formatCurrencyPrice(String(currentPayment.amount_in_cents / 100))} {currentPayment.currency}
                             </Text>
                             <Text style={styles.statusDetailLabel}>Estado</Text>
                             <Text style={styles.statusDetailValue}>{info.display}</Text>

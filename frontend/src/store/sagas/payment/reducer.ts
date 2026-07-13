@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface PaymentRequest {
-  product_id: number;
+  items: { product_id: number; quantity: number }[];
   customer_email: string;
   card_number: string;
   cvv: string;
@@ -51,6 +51,10 @@ const paymentSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    pollPaymentStatus(state, _action: PayloadAction<number>) {},
+    pollPaymentStatusSuccess(state, action: PayloadAction<PaymentResponse>) {
+      state.currentPayment = action.payload;
+    },
     clearPayment(state) {
       state.currentPayment = null;
       state.loading = false;
@@ -63,6 +67,8 @@ export const {
   processPayment,
   processPaymentSuccess,
   processPaymentFailure,
+  pollPaymentStatus,
+  pollPaymentStatusSuccess,
   clearPayment,
 } = paymentSlice.actions;
 
