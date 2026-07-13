@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { colors } from '../utils/colors';
 import BottomTabs from './bottom-tabs';
-import { CartScreen, SplashScreen } from '../screens';
+import { CartScreen, ProductDetailScreen, SplashScreen } from '../screens';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -24,8 +24,8 @@ export default function RootStack() {
           headerShown: false,
         }} />
       <Stack.Screen
-        name="Cart"
-        component={CartScreen}
+        name="ProductDetail"
+        component={ProductDetailScreen}
         options={{
           headerShown: false,
         }} />
