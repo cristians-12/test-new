@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ImageSourcePropType, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles } from './styles';
 
 import { PAYMENT_STATUS, CARD_BRANDS } from '../../constants';
@@ -10,7 +10,14 @@ import { StackNavigation } from '../../types/navigation';
 import { processPayment, clearPayment } from '../../store/sagas/payment/reducer';
 import { clearCart } from '../../store/sagas/cart/reducer';
 import ButtonComponent from '../../components/molecules/button-component';
+import { CardPreview, ImageComponent } from '../../components/molecules';
 import { formatCurrencyPrice } from '../../utils';
+import { images } from '../../assets';
+
+const CARD_BRAND_IMAGES: Record<string, ImageSourcePropType> = {
+    visa: images.visa_logo,
+    mastercard: images.mastercard_logo,
+};
 
 
 export default function PaymentTemplate() {
@@ -164,58 +171,19 @@ export default function PaymentTemplate() {
         }
     };
 
-    const cardBrandImage =
-        cardType !== 'unknown' ? CARD_BRANDS[cardType]?.label : null;
     return (
         <>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-                    <Text style={styles.backText}>← Atrás</Text>
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>
-                    {step === 'form'
-                        ? 'Información de pago'
-                        : step === 'summary'
-                            ? 'Resumen de pago'
-                            : 'Estado de transacción'}
-                </Text>
-                <View style={styles.backButton} />
-            </View>
 
             {step === 'form' && (
                 <ScrollView
                     style={styles.scrollContent}
                     contentContainerStyle={styles.scrollContainer}
                     keyboardShouldPersistTaps="handled">
-                    <View style={styles.cardPreview}>
-                        <View style={styles.cardPreviewInner}>
-                            <View style={styles.cardBrandRow}>
-                                <Text style={styles.cardTypeLabel}>
-                                    {cardType !== 'unknown'
-                                        ? CARD_BRANDS[cardType]?.label
-                                        : 'TARJETA'}
-                                </Text>
-                                {cardBrandImage && (
-                                    <View style={styles.cardBrandBadge}>
-                                        <Text style={styles.cardBrandBadgeText}>
-                                            {cardBrandImage}
-                                        </Text>
-                                    </View>
-                                )}
-                            </View>
-                            <Text style={styles.cardPreviewNumber}>
-                                {cardNumber || '**** **** **** ****'}
-                            </Text>
-                            <View style={styles.cardPreviewFooter}>
-                                <Text style={styles.cardPreviewLabel}>
-                                    {cardHolder || 'TITULAR'}
-                                </Text>
-                                <Text style={styles.cardPreviewLabel}>
-                                    {expiry || 'MM/AA'}
-                                </Text>
-                            </View>
-                        </View>
-                    </View>
+                    <CardPreview
+                        cardNumber={cardNumber}
+                        cardHolder={cardHolder}
+                        expiry={expiry}
+                    />
 
                     <Text style={styles.label}>Correo electrónico</Text>
                     <TextInput
@@ -351,12 +319,21 @@ export default function PaymentTemplate() {
 
                         <View style={styles.cardInfoBox}>
                             <Text style={styles.cardInfoLabel}>Tarjeta</Text>
-                            <Text style={styles.cardInfoValue}>
-                                {cardType !== 'unknown'
-                                    ? CARD_BRANDS[cardType]?.label
-                                    : 'Tarjeta'}{' '}
-                                {maskedCardNumber}
-                            </Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                                {CARD_BRAND_IMAGES[cardType] && (
+                                    <ImageComponent
+                                        source={CARD_BRAND_IMAGES[cardType]}
+                                        resizeMode="contain"
+                                        style={{ width: 32, height: 20 }}
+                                    />
+                                )}
+                                <Text style={styles.cardInfoValue}>
+                                    {cardType !== 'unknown'
+                                        ? CARD_BRANDS[cardType]?.label
+                                        : 'Tarjeta'}{' '}
+                                    {maskedCardNumber}
+                                </Text>
+                            </View>
                             <Text style={styles.cardInfoLabel}>Titular</Text>
                             <Text style={styles.cardInfoValue}>{cardHolder}</Text>
                             <Text style={styles.cardInfoLabel}>Email</Text>
