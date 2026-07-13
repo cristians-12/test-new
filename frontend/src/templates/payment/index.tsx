@@ -1,11 +1,17 @@
-import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles } from './styles';
 
 import { PAYMENT_STATUS, CARD_BRANDS } from '../../constants';
-  visa: { label: 'VISA' },
-  mastercard: { label: 'MasterCard' },
-};
+import { detectCardType, formatCardNumber, formatExpiry, isValidCVV, isValidEmail, isValidExpiry, luhnCheck } from '../../utils/validation/cardUtils';
+import { useNavigation } from '@react-navigation/native';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { StackNavigation } from '../../types/navigation';
+import { clearPayment, processPayment } from '../../store/sagas/payment/reducer';
+import { clearCart } from '../../store/sagas/cart/reducer';
+import ButtonComponent from '../../components/molecules/button-component';
+import { formatCurrencyPrice } from '../../utils';
+
 
 export default function PaymentTemplate() {
 
@@ -390,7 +396,7 @@ export default function PaymentTemplate() {
                             <Text style={styles.statusDetailValue}>{currentPayment.reference}</Text>
                             <Text style={styles.statusDetailLabel}>Monto</Text>
                             <Text style={styles.statusDetailValue}>
-                                ${formatCurrencyPrice(String(currentPayment.amount_in_cents / 100))} {currentPayment.currency}
+                                ${formatCurrencyPrice(String(currentPayment.amount_in_cents / 1000))} {currentPayment.currency}
                             </Text>
                             <Text style={styles.statusDetailLabel}>Estado</Text>
                             <Text style={styles.statusDetailValue}>{info.display}</Text>
