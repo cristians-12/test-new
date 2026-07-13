@@ -8,11 +8,28 @@ import {
   MaxLength,
   MinLength,
   Matches,
+  IsArray,
+  ArrayNotEmpty,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class CartItemDto {
+  @IsInt()
+  @IsPositive()
+  product_id!: number;
+
+  @IsInt()
+  @IsPositive()
+  quantity!: number;
+}
 
 export class CreatePaymentDto {
-  @IsInt()
-  product_id!: number;
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CartItemDto)
+  items!: CartItemDto[];
 
   @IsEmail()
   customer_email!: string;
@@ -45,6 +62,7 @@ export class CreatePaymentDto {
   exp_year!: string;
 
   @IsString()
+  @MinLength(5)
   @MaxLength(255)
   card_holder!: string;
 }
