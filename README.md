@@ -1,475 +1,303 @@
-# Monorepo - Frontend App & NestJS Backend
+# E-Commerce Mobile App — Credit Card Payment Checkout
 
-Monorepo full-stack que contiene una app móvil React Native (frontend) y un backend NestJS con soporte Docker.
+Full-stack e-commerce application built with **React Native (Expo)** and **NestJS**, featuring a complete credit card payment checkout flow integrated with the **Wompi** payment gateway (sandbox mode).
 
-## 📁 Estructura del Proyecto
+---
+
+## APK
+
+The compiled Android APK is located at:
 
 ```
-.
-├── frontend/           # Aplicación móvil React Native
-├── backend/            # Servidor API NestJS
-├── docker-compose.yml  # Orquestación con Docker Compose
-└── README.md          # Este archivo
+frontend\android\app\build\outputs\apk\release\app-release.apk
 ```
 
-## 🏗️ Arquitectura
+---
 
-### Frontend
-- **Tipo**: App móvil React Native (iOS & Android)
-- **Stack**: React Native 0.73.6, TypeScript, Redux, Redux Saga, React Navigation
-- **Ubicación**: `/frontend`
-- **Dependencias**: axios (cliente HTTP), redux-saga, react-native-vector-icons
+## Tech Stack
 
-### Backend
-- **Tipo**: API REST con NestJS
-- **Stack**: NestJS 11, TypeScript, TypeORM, PostgreSQL, Redis
-- **Ubicación**: `/backend`
-- **Base de datos**: PostgreSQL (versión 16-alpine)
-- **Caché**: Redis (versión 7-alpine) - configurado pero actualmente usa caché en memoria
-- **Pagos**: Integración con API Wompi (sandbox) - tokenización de tarjetas, validación de firmas, polling de estados
-- **Dependencias**: @nestjs/cache-manager, @nestjs/typeorm, class-validator, ioredis
+| Layer    | Technology                                              |
+| -------- | ------------------------------------------------------- |
+| Mobile   | React Native 0.73, Redux Toolkit, Redux-Saga, Axios    |
+| Backend  | NestJS, TypeORM, PostgreSQL, Redis (cache), class-validator |
+| Payment  | Wompi Sandbox API                                       |
+| Infra    | Docker, Docker Compose                                  |
+| Tests    | Jest, Supertest, @testing-library/react-native          |
 
-## 🚀 Inicio Rápido
+---
 
-### Prerrequisitos
+## Project Structure
+
+```
+├── backend/                          # NestJS API
+│   ├── src/
+│   │   ├── domain/                   # Hexagonal Architecture — Domain layer
+│   │   │   ├── model/                #   Interfaces & enums (IProduct, IPayment, etc.)
+│   │   │   ├── dto/                  #   Data Transfer Objects with class-validator
+│   │   │   └── port/                 #   Ports (input use cases + output repositories)
+│   │   ├── application/              # Application layer — Services implementing use cases
+│   │   │   └── __tests__/            #   Unit tests for services
+│   │   ├── adapters/                 # Adapters layer
+│   │   │   ├── inbound/rest/         #   REST controllers (primary adapters)
+│   │   │   │   └── __tests__/        #   Controller unit tests
+│   │   │   └── outbound/             #   External adapters
+│   │   │       ├── persistence/typeorm/  # ORM entities + repository implementations
+│   │   │       └── external/wompi/       # Wompi API gateway
+│   │   ├── config/                   # Configuration modules (DB, Redis, Wompi)
+│   │   ├── modules/                  # NestJS feature modules
+│   │   └── main.ts                   # Application entry point
+│   ├── Dockerfile
+│   └── package.json
+├── frontend/                         # React Native app
+│   ├── src/
+│   │   ├── screens/                  # Screen components (Home, Cart, Payment, etc.)
+│   │   ├── templates/                # Template components (payment form, history)
+│   │   ├── components/               # Reusable UI components
+│   │   ├── store/                    # Redux Toolkit + Redux-Saga
+│   │   ├── hooks/                    # Custom hooks (usePayment, etc.)
+│   │   ├── navigation/               # React Navigation config
+│   │   ├── api/                      # Axios API client
+│   │   ├── assets/                   # Images (logos, placeholders)
+│   │   └── utils/                    # Helpers (validation, formatters)
+│   └── package.json
+├── docker-compose.yml                # PostgreSQL + Redis + Backend
+├── .env.example
+└── README.md
+```
+
+---
+
+## Backend API
+
+### Endpoints
+
+| Method   | Endpoint              | Description                   |
+| -------- | --------------------- | ----------------------------- |
+| `GET`    | `/api/products`       | List all products (with cache) |
+| `GET`    | `/api/products/:id`   | Get product by ID             |
+| `POST`   | `/api/products`       | Create product                |
+| `PUT`    | `/api/products/:id`   | Update product                |
+| `DELETE` | `/api/products/:id`   | Delete product                |
+| `GET`    | `/api/categories`     | List all categories           |
+| `GET`    | `/api/categories/:id` | Get category by ID            |
+| `POST`   | `/api/categories`     | Create category               |
+| `PUT`    | `/api/categories/:id` | Update category               |
+| `DELETE` | `/api/categories/:id` | Delete category               |
+| `POST`   | `/api/payments`       | Create payment (Wompi)        |
+| `GET`    | `/api/payments`       | List all payments             |
+| `GET`    | `/api/payments/:id`   | Get payment by ID             |
+| `POST`   | `/api/payments/refresh` | Refresh pending payments     |
+| `POST`   | `/api/payments/webhook` | Wompi webhook handler        |
+
+### Architecture — Hexagonal (Ports & Adapters)
+
+The backend follows **Hexagonal Architecture** to decouple the domain logic from external concerns:
+
+- **Domain** (`domain/`): Pure business interfaces, DTOs, and port definitions. No framework dependencies.
+- **Application** (`application/`): Services that implement use cases defined by input ports and depend on output ports.
+- **Adapters** (`adapters/`):
+  - *Inbound*: REST controllers that receive HTTP requests and delegate to use cases.
+  - *Outbound*: TypeORM repositories (database) and Wompi API gateway (external payment provider).
+- **Config** (`config/`): Infrastructure configuration (database, cache, Wompi keys).
+- **Modules** (`modules/`): NestJS feature modules wiring everything together.
+
+---
+
+## Local Development with Docker
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) and Docker Compose
+- Git
+
+### Steps
+
+1. **Clone the repository**
+
+```bash
+git clone <repository-url>
+cd <project-folder>
+```
+
+2. **Create your `.env` file**
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your own values if needed. The default configuration works out of the box with Docker.
+
+3. **Start all services**
+
+```bash
+docker-compose up --build
+```
+
+This starts:
+
+| Service    | Port  | Description                    |
+| ---------- | ----- | ------------------------------ |
+| `postgres` | 5432  | PostgreSQL 16 database         |
+| `redis`    | 6379  | Redis 7 cache                  |
+| `backend`  | 3000  | NestJS API server              |
+
+4. **Seed the database**
+
+Once the backend is running:
+
+```bash
+docker exec -it test-backend pnpm seed
+```
+
+5. **Access the API**
+
+```
+http://localhost:3000/api
+```
+
+6. **Stop services**
+
+```bash
+docker-compose down
+```
+
+To remove volumes (fresh start):
+
+```bash
+docker-compose down -v
+```
+
+---
+
+## Frontend Setup (React Native)
+
+### Prerequisites
+
 - Node.js >= 18
-- Docker & Docker Compose
-- pnpm (para el backend)
-- React Native CLI (para el frontend)
+- Android Studio (for Android emulator)
+- JDK 17
 
-### Ejecutar el Backend con Docker
+### Steps
 
-1. **Clonar el repositorio**
-   ```bash
-   git clone <url-del-repositorio>
-   cd <nombre-del-proyecto>
-   ```
+1. **Install dependencies**
 
-2. **Configurar variables de entorno**
-   ```bash
-   cp .env.example .env
-   ```
+```bash
+cd frontend
+npm install
+```
 
-3. **Iniciar todos los servicios con Docker Compose**
-   ```bash
-   docker compose up
-   ```
+2. **Start Metro bundler**
 
-   Esto iniciará:
-   - PostgreSQL en `localhost:5432`
-   - Redis en `localhost:6379`
-   - Backend (NestJS) en `localhost:3000`
+```bash
+npm start
+```
 
-4. **Verificar el estado de los servicios**
-   ```bash
-   docker compose ps
-   ```
+3. **Run on Android emulator**
 
-### Ejecutar el Frontend
+Make sure an emulator is running, then:
 
-1. **Instalar dependencias**
-   ```bash
-   cd frontend
-   npm install
-   # o
-   pnpm install
-   ```
+```bash
+npm run android
+```
 
-2. **Iniciar el bundler Metro**
-   ```bash
-   npm start
-   ```
+> The API client connects to `http://10.0.2.2:3000/api` by default, which maps to `localhost:3000` on the host machine from the Android emulator.
 
-3. **Ejecutar en iOS**
-   ```bash
-   npm run ios
-   ```
+### Build APK
 
-4. **Ejecutar en Android**
-   ```bash
-   npm run android
-   ```
+```bash
+cd android
+./gradlew assembleRelease
+```
 
-   > **Nota:** `localhost` dentro del Android Emulator se refiere al emulador mismo, no a tu máquina. El cliente API está configurado para usar `10.0.2.2`, un alias especial que Android Emulator utiliza para acceder al `localhost` de la máquina anfitriona. Ver más detalles en [Red del Android Emulator](https://developer.android.com/tools/emulator#networking).
+The APK will be at:
 
-## 📋 Variables de Entorno
+```
+frontend/android/app/build/outputs/apk/release/app-release.apk
+```
 
-Crear un archivo `.env` en la raíz del proyecto:
+---
 
-```env
-# Base de datos
-DB_USER=root
-DB_PASSWORD=root_secret
-DB_NAME=test_db
+## Unit Tests
 
-# Backend
-NODE_ENV=development
-PORT=3000
+### Backend (96 tests)
 
-# API Sandbox (no usar la palabra "Wompi" en el repositorio)
-WOMPI_API_URL=https://sandbox.wompi.co/v1
+```bash
+cd backend
+pnpm test
+```
+
+| Module          | Test file                                         | Tests |
+| --------------- | ------------------------------------------------- | ----- |
+| DTOs            | `domain/dto/__tests__/dto.spec.ts`                | 12    |
+| ProductService  | `application/__tests__/product.service.spec.ts`   | 14    |
+| CategoryService | `application/__tests__/category.service.spec.ts`  | 14    |
+| PaymentService  | `application/__tests__/payment.service.spec.ts`   | 14    |
+| ProductsCtrl    | `adapters/inbound/rest/__tests__/products.controller.spec.ts`  | 14    |
+| CategoriesCtrl  | `adapters/inbound/rest/__tests__/categories.controller.spec.ts` | 14    |
+| PaymentsCtrl    | `adapters/inbound/rest/__tests__/payments.controller.spec.ts`   | 14    |
+| AppController   | `app.controller.spec.ts`                          | 1     |
+| AppService      | `app.service.spec.ts`                             | 1     |
+
+**Total: 96 tests passing**
+
+### Frontend (189 tests)
+
+```bash
+cd frontend
+npm test
+```
+
+| Module              | Tests |
+| ------------------- | ----- |
+| Payment saga        | 16    |
+| Payment reducer     | 22    |
+| Products saga       | 16    |
+| Products reducer    | 22    |
+| Categories saga     | 16    |
+| Categories reducer  | 22    |
+| Cart reducer        | 18    |
+| Cart persist        | 8     |
+| Card validation     | 25    |
+| Price formatter     | 12    |
+| App                 | 1     |
+| Other utilities     | 11    |
+
+**Total: 189 tests passing**
+
+---
+
+## Mobile App — Payment Flow
+
+1. **Splash screen** — App loading screen
+2. **Home** — Product catalog with categories filter
+3. **Product detail** — View product info and add to cart
+4. **Cart** — Review selected products, adjust quantities
+5. **Payment form** — Enter credit card details (number, expiry, CVV, cardholder name)
+   - Real-time card brand detection (Visa / Mastercard)
+   - Card number formatting with spaces
+   - Luhn algorithm validation
+6. **Payment summary** — Review order before submitting
+7. **Payment status** — Confirmation/rejection screen after Wompi processing
+8. **Payment history** — View all previous payments with product details
+
+---
+
+## Wompi Integration (Sandbox)
+
+All payments run in **sandbox mode** — no real money is charged.
+
+Default sandbox keys are provided in `docker-compose.yml`. To use your own keys, update the `WOMPI_*` variables in your `.env` file:
+
+```
+WOMPI_API_URL=https://api-sandbox.co.uat.wompi.dev/v1
 WOMPI_PUBLIC_KEY=pub_stagtest_xxx
 WOMPI_PRIVATE_KEY=prv_stagtest_xxx
 WOMPI_EVENTS_KEY=stagtest_events_xxx
 WOMPI_INTEGRITY_KEY=stagtest_integrity_xxx
 ```
 
-### Configuración de Servicios
+---
 
-| Servicio | Host | Puerto | Credenciales |
-|----------|------|--------|--------------|
-| PostgreSQL | `postgres` (Docker) / `localhost` (Local) | 5432 | Usuario: `root`, Contraseña: `root_secret` |
-| Redis | `redis` (Docker) / `localhost` (Local) | 6379 | - |
-| Backend API | `localhost` | 3000 | - |
-
-## 🔧 Desarrollo del Backend
-
-### Scripts Disponibles
-
-```bash
-# Desarrollo
-pnpm start:dev        # Iniciar en modo watch
-
-# Build y Producción
-pnpm build            # Compilar TypeScript
-pnpm start:prod       # Ejecutar aplicación compilada
-
-# Testing
-pnpm test             # Ejecutar tests unitarios
-pnpm test:watch       # Ejecutar tests en modo watch
-pnpm test:cov         # Generar reporte de cobertura
-pnpm test:e2e         # Ejecutar tests end-to-end
-
-# Calidad de Código
-pnpm lint             # Corregir problemas de ESLint
-pnpm format           # Formatear código con Prettier
-
-# Base de datos
-pnpm seed             # Ejecutar seed de la base de datos
-```
-
-### Estructura del Proyecto
-
-```
-backend/
-├── src/
-│   ├── main.ts               # Punto de entrada de la aplicación
-│   ├── app.module.ts         # Módulo raíz
-│   ├── seed.ts               # Script de seed de la base de datos
-│   ├── products/             # Módulo de productos (CRUD)
-│   │   ├── product.entity.ts
-│   │   ├── products.service.ts
-│   │   ├── products.controller.ts
-│   │   ├── products.module.ts
-│   │   └── dto/
-│   ├── categories/           # Módulo de categorías (CRUD + FK)
-│   │   ├── category.entity.ts
-│   │   ├── categories.service.ts
-│   │   ├── categories.controller.ts
-│   │   ├── categories.module.ts
-│   │   └── dto/
-│   └── payments/             # Módulo de pagos (API Sandbox)
-│       ├── payment.entity.ts
-│       ├── payments.service.ts
-│       ├── payments.controller.ts
-│       ├── payments.module.ts
-│       └── dto/
-├── test/
-│   ├── jest-e2e.json
-│   └── *.e2e-spec.ts
-├── Dockerfile          # Configuración de build Docker
-├── .dockerignore       # Exclusiones del build Docker
-├── package.json        # Dependencias
-└── tsconfig.json       # Configuración de TypeScript
-```
-
-## 📱 Desarrollo del Frontend
-
-### Scripts Disponibles
-
-```bash
-# Desarrollo
-pnpm start              # Iniciar bundler Metro
-pnpm run ios            # Ejecutar en simulador/dispositivo iOS
-pnpm run android        # Ejecutar en emulador/dispositivo Android
-
-# Testing y Calidad
-pnpm test               # Ejecutar tests
-pnpm run lint           # Ejecutar ESLint
-```
-
-### Estructura del Proyecto
-
-```
-frontend/
-├── src/
-│   ├── App.tsx
-│   ├── app/
-│   ├── screens/
-│   ├── navigation/
-│   ├── templates/
-│   ├── components/
-│   ├── hooks/
-│   ├── store/
-│   │   ├── sagas/
-│   │   └── middleware/
-│   ├── api/
-│   ├── assets/
-│   ├── constants/
-│   └── utils/
-├── ios/                # Código nativo de iOS
-├── android/            # Código nativo de Android
-├── __tests__/
-├── app.json            # Configuración de la app
-├── metro.config.js     # Configuración del bundler Metro
-├── package.json        # Dependencias
-└── tsconfig.json       # Configuración de TypeScript
-```
-
-## 🐳 Docker & Docker Compose
-
-### Construir imagen del Backend
-
-```bash
-docker build -t backend:latest ./backend
-```
-
-### Servicios de Docker Compose
-
-```bash
-# Ejecutar todos los servicios
-docker compose up
-
-# Ejecutar en segundo plano
-docker compose up -d
-
-# Detener todos los servicios
-docker compose down
-
-# Ver logs
-docker compose logs -f backend
-docker compose logs -f postgres
-docker compose logs -f redis
-```
-
-### Dockerfile del Backend
-
-El backend usa un build multi-stage basado en Alpine:
-- **Base**: `node:22-alpine`
-- **Gestor de paquetes**: pnpm
-- **Puerto**: 3000
-- **Modo watch**: Habilitado para desarrollo
-
-### Health Checks
-
-Todos los servicios incluyen health checks:
-- **PostgreSQL**: Verificación con `pg_isready` cada 5s
-- **Redis**: Verificación con `redis-cli ping` cada 5s
-
-## 🔌 Integración API
-
-El frontend se conecta al backend vía HTTP:
-- **URL base**: `http://10.0.2.2:3000/api` (Android Emulator) / `http://localhost:3000/api` (iOS Simulator / Web)
-- **Biblioteca cliente**: Axios
-- **Gestión de estado**: Redux con Redux Saga
-
-Ejemplo de conexión en el frontend:
-```typescript
-const api = axios.create({
-  baseURL: 'http://10.0.2.2:3000/api', // Android Emulator
-  timeout: 15000,
-});
-```
-
-## 🗄️ Base de Datos
-
-### PostgreSQL
-- **Versión**: 16-alpine
-- **Base de datos por defecto**: `test_db`
-- **Volumen**: `postgres_data` (persistido)
-- **Migraciones**: Configurar en tu servicio NestJS
-
-### Redis
-- **Versión**: 7-alpine
-- **Propósito**: Configurado para caché (actualmente usa caché en memoria)
-- **Volumen**: `redis_data` (persistido)
-
-## 📦 Dependencias
-
-### Bibliotecas Principales del Backend
-- **NestJS**: Framework para construir aplicaciones escalables del lado del servidor
-- **TypeORM**: ORM para interacciones con la base de datos
-- **Cache Manager**: Caché en memoria (Redis configurado para uso futuro)
-- **Class Validator**: Validación de entradas
-- **Jest**: Framework de testing
-
-### Bibliotecas Principales del Frontend
-- **React Native**: Framework móvil multiplataforma
-- **Redux Toolkit**: Gestión de estado
-- **React Navigation**: Biblioteca de navegación
-- **Axios**: Cliente HTTP
-
-## 🧪 Testing
-
-### Tests del Backend
-
-| Métrica | Resultado |
-|---|---|
-| Test Suites | 8 pasaron, 8 total |
-| Tests | **73 pasaron**, 73 total |
-
-> **Note:** `dto.spec.ts` tests fail due to a pre-existing `Reflect.getMetadata` issue with `class-transformer`/`class-validator`.
-
-```bash
-cd backend
-
-# Tests unitarios
-pnpm test
-
-# Modo watch
-pnpm test:watch
-
-# Reporte de cobertura
-pnpm test:cov
-
-# Tests E2E
-pnpm test:e2e
-```
-
-### Tests del Frontend
-
-| Métrica | Resultado |
-|---|---|
-| Test Suites | 10 pasaron, 10 total |
-| Tests | **189 pasaron**, 189 total |
-| Cobertura (Statements) | **99.54%** |
-| Cobertura (Branches) | **96.15%** |
-| Cobertura (Functions) | **97.53%** |
-| Cobertura (Lines) | **99.53%** |
-
-Cobertura por archivo:
-
-| Archivo | Statements | Branches | Functions | Lines |
-|---|---|---|---|---|
-| cart/reducer.ts | 100% | 100% | 100% | 100% |
-| categories/reducer.ts | 100% | 100% | 100% | 100% |
-| categories/saga.ts | 100% | 100% | 100% | 100% |
-| products/reducer.ts | 100% | 100% | 100% | 100% |
-| products/saga.ts | 100% | 100% | 100% | 100% |
-| payment/reducer.ts | 100% | 100% | 90% | 100% |
-| payment/saga.ts | 100% | 100% | 100% | 100% |
-| cartPersist.ts | 100% | 100% | 100% | 100% |
-| formatPrice.ts | 85.71% | 0% | 66.66% | 85.71% |
-
-```bash
-cd frontend
-
-# Ejecutar tests
-pnpm test
-
-# Ejecutar tests con reporte de cobertura
-pnpm test -- --coverage
-```
-
-## 📚 Calidad de Código
-
-### Linting y Formateo
-
-**Backend:**
-```bash
-cd backend
-pnpm lint      # Corregir problemas de ESLint
-pnpm format    # Formatear con Prettier
-```
-
-**Frontend:**
-```bash
-cd frontend
-npm run lint   # Ejecutar ESLint
-```
-
-## 🚢 Despliegue en Producción
-
-### Despliegue del Backend
-
-1. **Construir imagen de producción**
-   ```bash
-   docker build -t myapp/backend:1.0.0 ./backend
-   ```
-
-2. **Actualizar docker-compose.yml** con configuración de producción:
-   - Cambiar `NODE_ENV: production`
-   - Eliminar volume mounts del código fuente
-   - Actualizar credenciales de la base de datos
-   - Usar comando de build de producción en vez del modo watch
-
-3. **Subir al registro**
-   ```bash
-   docker push myapp/backend:1.0.0
-   docker push myapp/redis:1.0.0
-   docker push myapp/postgres:1.0.0
-   ```
-
-### Despliegue del Frontend
-
-**iOS:**
-```bash
-cd frontend
-npm run ios -- --configuration Release
-```
-
-**Android:**
-```bash
-cd frontend
-npm run android -- --variant release
-```
-
-## 🔐 Seguridad
-
-- **Variables de entorno**: Almacenar secretos en `.env` (no se commitea a git)
-- **Validación de entradas**: El backend usa class-validator para todas las entradas
-- **Docker**: Los servicios se ejecutan con privilegios mínimos e imágenes basadas en Alpine
-- **Base de datos**: Usar credenciales seguras en producción
-
-## 📖 Recursos Adicionales
-
-- [Documentación de NestJS](https://docs.nestjs.com/)
-- [Documentación de React Native](https://reactnative.dev/)
-- [Documentación de Docker](https://docs.docker.com/)
-- [Documentación de PostgreSQL](https://www.postgresql.org/docs/)
-- [Documentación de Redis](https://redis.io/docs/)
-
-## 🐛 Solución de Problemas
-
-### El backend no inicia
-```bash
-# Verificar si el puerto 3000 está en uso
-lsof -i :3000
-
-# Verificar logs de Docker
-docker compose logs backend
-```
-
-### Problemas de conexión a la base de datos
-```bash
-# Verificar que PostgreSQL esté ejecutándose
-docker compose logs postgres
-
-# Verificar estado
-docker compose ps
-```
-
-### El frontend no se conecta al backend
-- Verificar que el backend esté ejecutándose: `docker compose ps`
-- Verificar la URL base de la API en la configuración del frontend (`frontend/src/api/api.ts`)
-- Asegurar que el firewall permita conexiones al puerto 3000
-- **Android Emulator:** El cliente API usa `10.0.2.2` en lugar de `localhost`. Este es un alias especial que Android Emulator utiliza para acceder a la máquina anfitriona. Si cambias la URL, asegúrate de usar `10.0.2.2` y no `localhost` al ejecutar en un emulador de Android. Ver [Red del Android Emulator](https://developer.android.com/tools/emulator#networking).
-- **iOS Simulator:** `localhost` funciona normalmente ya que el simulador comparte la red del anfitrión.
-
-## 📝 Licencia
+## License
 
 UNLICENSED
-
-## 👥 Contribuir
-
-Seguir el estilo de código existente y asegurar que todos los tests pasen antes de enviar cambios.
