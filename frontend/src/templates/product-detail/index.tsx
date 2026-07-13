@@ -9,6 +9,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { formatCurrencyPrice } from '../../utils';
 import ButtonComponent from '../../components/molecules/button-component';
 import { colors } from '../../utils/colors';
+import { addItem } from '../../store/sagas/cart/reducer';
 
 interface Props {
   id: string | number;
@@ -18,13 +19,16 @@ export default function ProductDetailTemplate({ id }: Props) {
 
   const dispatch = useAppDispatch();
   const { loading, selected } = useAppSelector((state) => state.products);
+  const isInCart = useAppSelector((s) =>
+    s.cart.items.some((item) => item.id === String(selected?.id)),
+  );
 
   useEffect(() => {
     dispatch(fetchProductById(Number(id)));
   }, [id]);
 
 
-  if (loading) {
+  if (loading || !selected) {
     return <TransparentLoading />
   }
 
@@ -37,7 +41,7 @@ export default function ProductDetailTemplate({ id }: Props) {
     price,
     is_active,
     id: productId
-  } = selected!;
+  } = selected;
 
   return (
     <>
@@ -66,12 +70,18 @@ export default function ProductDetailTemplate({ id }: Props) {
           titleStyle={styles.titlebtn}
         />
         <ButtonComponent
-          title='Agregar al carrito'
-          onPress={() => console.log('Agregar al carrito')}
-          style={styles.buttonSecondary}
+          title={isInCart ? 'Agregado al carrito' : 'Agregar al carrito'}
+          onPress={() => dispatch(addItem({
+            id: String(productId),
+            name,
+            price,
+            image: image_url ?? undefined,
+          }))}
+          style={isInCart ? styles.buttonAdded : styles.buttonSecondary}
           titleStyle={styles.titlebtn}
-          icon="cart-outline"
+          icon={isInCart ? 'checkmark-outline' : 'cart-outline'}
           iconColor="white"
+          disabled={isInCart}
         />
       </View>
     </>

@@ -57,7 +57,7 @@ export default function ProductCard({ product }: Props) {
                     disabled={isInCart}
                 >
                     <Ionicons
-                        name={isInCart ? 'checkmark-circle-outline' : 'cart-outline'}
+                        name={isInCart ? 'checkmark-outline' : 'cart-outline'}
                         size={20}
                         color="#fff"
                     />

@@ -47,6 +47,12 @@ export const styles = StyleSheet.create({
         borderRadius: 10,
         marginTop: 10
     },
+    buttonAdded: {
+        backgroundColor: '#2ecc71',
+        padding: 10,
+        borderRadius: 10,
+        marginTop: 10
+    },
     titlebtn:{
         color: 'white',
         fontSize: 15,
