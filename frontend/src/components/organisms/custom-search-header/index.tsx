@@ -9,18 +9,19 @@ import { fetchProducts } from '../../../store/sagas/products/reducer';
 interface Props {
     search: string;
     setSearch: (value: string) => void;
+    categoryId?: number | null;
 }
 
-export default function CustomSearchHeader({ search, setSearch }: Props) {
+export default function CustomSearchHeader({ search, setSearch, categoryId }: Props) {
     const dispatch = useAppDispatch();
 
     const handleSearch = () => {
-        dispatch(fetchProducts({ search: search.trim() || undefined }));
+        dispatch(fetchProducts({ search: search.trim() || undefined, category_id: categoryId ?? undefined }));
     };
 
     const handleClear = () => {
         setSearch('');
-        dispatch(fetchProducts());
+        dispatch(fetchProducts({ category_id: categoryId ?? undefined }));
     };
 
     return (
