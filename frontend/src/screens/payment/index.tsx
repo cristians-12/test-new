@@ -84,6 +84,9 @@ export default function PaymentScreen() {
     if (!cardHolder.trim()) {
       setCardHolderError('Titular requerido');
       valid = false;
+    } else if (cardHolder.trim().length < 5) {
+      setCardHolderError('El titular debe tener al menos 5 caracteres');
+      valid = false;
     } else {
       setCardHolderError('');
     }
@@ -434,9 +437,9 @@ export default function PaymentScreen() {
               {currentPayment.reference}
             </Text>
             <Text style={styles.statusDetailLabel}>Monto</Text>
-            <Text style={styles.statusDetailValue}>
+              <Text style={styles.statusDetailValue}>
               ${formatCurrencyPrice(
-                (currentPayment.amount_in_cents / 100).toString(),
+                String(currentPayment.amount_in_cents / 100),
               )}{' '}
               {currentPayment.currency}
             </Text>
