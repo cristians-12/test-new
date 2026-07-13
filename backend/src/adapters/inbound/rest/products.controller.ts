@@ -13,9 +13,9 @@ import {
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 import type { IProductUseCase } from '../../../domain/port/input/product.port';
-import type { CreateProductDto } from '../../../domain/dto/create-product.dto';
-import type { UpdateProductDto } from '../../../domain/dto/update-product.dto';
-import type { QueryProductDto } from '../../../domain/dto/query-product.dto';
+import { CreateProductDto } from '../../../domain/dto/create-product.dto';
+import { UpdateProductDto } from '../../../domain/dto/update-product.dto';
+import { QueryProductDto } from '../../../domain/dto/query-product.dto';
 
 @Controller('products')
 export class ProductsController {
