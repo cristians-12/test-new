@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     inputIcon: {
-        marginRight: 8,
+        marginLeft: 8,
     },
     input: {
         flex: 1,
