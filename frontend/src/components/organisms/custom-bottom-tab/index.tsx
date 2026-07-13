@@ -1,9 +1,10 @@
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import React from 'react';
-import { View, TouchableOpacity, Text, ImageStyle } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { colors } from '../../../utils/colors';
 import { styles } from './styles';
+import { useAppSelector } from '../../../hooks';
 
 
 
@@ -12,6 +13,10 @@ export default function CustomBottomTab({
   navigation,
   descriptors,
 }: BottomTabBarProps) {
+  const cartCount = useAppSelector((s) =>
+    s.cart.items.reduce((sum, i) => sum + i.quantity, 0),
+  );
+
   return (
     <View style={styles.container}>
       {state.routes.map((route, index) => {
@@ -42,16 +47,27 @@ export default function CustomBottomTab({
 
         handlerCase(route.name);
 
+        const isCart = route.name === 'CartTab';
+
         return (
           <TouchableOpacity
             key={route.key}
             onPress={onPress}
             style={styles.tab}>
-            <Ionicons
-              name={iconName}
-              size={24}
-              color={isFocused ? colors.secondary : 'white'}
-            />
+            <View style={styles.iconContainer}>
+              <Ionicons
+                name={iconName}
+                size={24}
+                color={isFocused ? colors.secondary : 'white'}
+              />
+              {isCart && cartCount > 0 && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </Text>
+                </View>
+              )}
+            </View>
 
             <Text
               style={[
