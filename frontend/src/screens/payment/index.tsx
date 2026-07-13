@@ -439,7 +439,7 @@ export default function PaymentScreen() {
             <Text style={styles.statusDetailLabel}>Monto</Text>
               <Text style={styles.statusDetailValue}>
               ${formatCurrencyPrice(
-                String(currentPayment.amount_in_cents / 100),
+                String(currentPayment.amount_in_cents / 1000),
               )}{' '}
               {currentPayment.currency}
             </Text>
