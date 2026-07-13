@@ -130,7 +130,7 @@ Editar `.env` con tus propios valores si es necesario. La configuración por def
 3. **Iniciar todos los servicios**
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 Esto levanta:
@@ -158,13 +158,13 @@ http://localhost:3000/api
 6. **Detener servicios**
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 Para eliminar volúmenes (inicio limpio):
 
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 
 ---
