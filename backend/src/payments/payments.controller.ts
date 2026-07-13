@@ -20,6 +20,16 @@ export class PaymentsController {
     return this.paymentsService.create(dto);
   }
 
+  @Get()
+  findAll() {
+    return this.paymentsService.findAll();
+  }
+
+  @Post('refresh')
+  refreshPendingPayments() {
+    return this.paymentsService.refreshPendingPayments();
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.paymentsService.findOne(id);
