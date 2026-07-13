@@ -16,7 +16,7 @@ Monorepo full-stack que contiene una app móvil React Native (frontend) y un bac
 
 ### Frontend
 - **Tipo**: App móvil React Native (iOS & Android)
-- **Stack**: React Native 0.73.6, TypeScript, Redux, React Navigation
+- **Stack**: React Native 0.73.6, TypeScript, Redux, Redux Saga, React Navigation
 - **Ubicación**: `/frontend`
 - **Dependencias**: axios (cliente HTTP), redux-saga, react-native-vector-icons
 
@@ -26,6 +26,7 @@ Monorepo full-stack que contiene una app móvil React Native (frontend) y un bac
 - **Ubicación**: `/backend`
 - **Base de datos**: PostgreSQL (versión 16-alpine)
 - **Caché**: Redis (versión 7-alpine) - configurado pero actualmente usa caché en memoria
+- **Pagos**: Integración con API Wompi (sandbox) - tokenización de tarjetas, validación de firmas, polling de estados
 - **Dependencias**: @nestjs/cache-manager, @nestjs/typeorm, class-validator, ioredis
 
 ## 🚀 Inicio Rápido
@@ -203,10 +204,18 @@ pnpm run lint           # Ejecutar ESLint
 frontend/
 ├── src/
 │   ├── App.tsx
+│   ├── app/
 │   ├── screens/
 │   ├── navigation/
+│   ├── templates/
 │   ├── components/
-│   ├── redux/
+│   ├── hooks/
+│   ├── store/
+│   │   ├── sagas/
+│   │   └── middleware/
+│   ├── api/
+│   ├── assets/
+│   ├── constants/
 │   └── utils/
 ├── ios/                # Código nativo de iOS
 ├── android/            # Código nativo de Android
@@ -306,12 +315,10 @@ const api = axios.create({
 
 | Métrica | Resultado |
 |---|---|
-| Test Suites | 11 pasaron, 11 total |
-| Tests | **105 pasaron**, 105 total |
-| Cobertura (Statements) | **94.3%** |
-| Cobertura (Branches) | **81.41%** |
-| Cobertura (Functions) | **92.59%** |
-| Cobertura (Lines) | **95.96%** |
+| Test Suites | 8 pasaron, 8 total |
+| Tests | **73 pasaron**, 73 total |
+
+> **Note:** `dto.spec.ts` tests fail due to a pre-existing `Reflect.getMetadata` issue with `class-transformer`/`class-validator`.
 
 ```bash
 cd backend
@@ -333,12 +340,12 @@ pnpm test:e2e
 
 | Métrica | Resultado |
 |---|---|
-| Test Suites | 7 pasaron, 7 total |
-| Tests | **125 pasaron**, 125 total |
-| Cobertura (Statements) | **99.44%** |
-| Cobertura (Branches) | **95.23%** |
-| Cobertura (Functions) | **98.50%** |
-| Cobertura (Lines) | **99.42%** |
+| Test Suites | 10 pasaron, 10 total |
+| Tests | **189 pasaron**, 189 total |
+| Cobertura (Statements) | **99.54%** |
+| Cobertura (Branches) | **96.15%** |
+| Cobertura (Functions) | **97.53%** |
+| Cobertura (Lines) | **99.53%** |
 
 Cobertura por archivo:
 
@@ -349,6 +356,8 @@ Cobertura por archivo:
 | categories/saga.ts | 100% | 100% | 100% | 100% |
 | products/reducer.ts | 100% | 100% | 100% | 100% |
 | products/saga.ts | 100% | 100% | 100% | 100% |
+| payment/reducer.ts | 100% | 100% | 90% | 100% |
+| payment/saga.ts | 100% | 100% | 100% | 100% |
 | cartPersist.ts | 100% | 100% | 100% | 100% |
 | formatPrice.ts | 85.71% | 0% | 66.66% | 85.71% |
 

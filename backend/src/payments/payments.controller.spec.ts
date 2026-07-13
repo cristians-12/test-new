@@ -8,7 +8,9 @@ describe('PaymentsController', () => {
 
   const mockPaymentsService = {
     create: jest.fn(),
+    findAll: jest.fn(),
     findOne: jest.fn(),
+    refreshPendingPayments: jest.fn(),
     handleWebhook: jest.fn(),
   };
 
@@ -33,7 +35,7 @@ describe('PaymentsController', () => {
   describe('create', () => {
     it('should create a payment', async () => {
       const dto = {
-        product_id: 1,
+        items: [{ product_id: 1, quantity: 2 }],
         customer_email: 'test@example.com',
       };
       const expectedPayment = {
@@ -45,6 +47,7 @@ describe('PaymentsController', () => {
         status: PaymentStatus.PENDING,
         product_id: 1,
         product_name: 'Test Product',
+        product_quantity: [2],
       };
 
       mockPaymentsService.create.mockResolvedValue(expectedPayment);
@@ -53,6 +56,21 @@ describe('PaymentsController', () => {
 
       expect(result).toEqual(expectedPayment);
       expect(mockPaymentsService.create).toHaveBeenCalledWith(dto);
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return all payments', async () => {
+      const expectedPayments = [
+        { id: 1, reference: 'ref_123', status: PaymentStatus.PENDING },
+      ];
+
+      mockPaymentsService.findAll.mockResolvedValue(expectedPayments);
+
+      const result = await controller.findAll();
+
+      expect(result).toEqual(expectedPayments);
+      expect(mockPaymentsService.findAll).toHaveBeenCalled();
     });
   });
 
@@ -70,6 +88,21 @@ describe('PaymentsController', () => {
 
       expect(result).toEqual(expectedPayment);
       expect(mockPaymentsService.findOne).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe('refreshPendingPayments', () => {
+    it('should refresh pending payments and return all', async () => {
+      const expectedPayments = [
+        { id: 1, reference: 'ref_123', status: PaymentStatus.APPROVED },
+      ];
+
+      mockPaymentsService.refreshPendingPayments.mockResolvedValue(expectedPayments);
+
+      const result = await controller.refreshPendingPayments();
+
+      expect(result).toEqual(expectedPayments);
+      expect(mockPaymentsService.refreshPendingPayments).toHaveBeenCalled();
     });
   });
 

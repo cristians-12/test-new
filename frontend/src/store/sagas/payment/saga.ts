@@ -4,6 +4,11 @@ import {
   processPayment,
   processPaymentSuccess,
   processPaymentFailure,
+  pollPaymentStatus,
+  pollPaymentStatusSuccess,
+  fetchPaymentHistory,
+  fetchPaymentHistorySuccess,
+  fetchPaymentHistoryFailure,
   PaymentResponse,
 } from './reducer';
 import apiClient from '../../../api/api';
@@ -21,12 +26,46 @@ export function* processPaymentSaga(
   } catch (error: any) {
     const message =
       error.response?.data?.message ||
+      error.response?.data?.error ||
       error.message ||
       'Error al procesar el pago';
     yield put(processPaymentFailure(message));
   }
 }
 
+export function* pollPaymentStatusSaga(
+  action: ReturnType<typeof pollPaymentStatus>,
+): Generator<any, void, any> {
+  try {
+    const response: AxiosResponse<PaymentResponse> = yield call(
+      [apiClient, 'get'],
+      `/payments/${action.payload}`,
+    );
+    yield put(pollPaymentStatusSuccess(response.data));
+  } catch (_error: any) {
+    console.warn('[PaymentSaga] Poll failed, will retry:', _error?.message);
+  }
+}
+
+export function* fetchPaymentHistorySaga(): Generator<any, void, any> {
+  try {
+    const response: AxiosResponse<PaymentResponse[]> = yield call(
+      [apiClient, 'post'],
+      '/payments/refresh',
+    );
+    yield put(fetchPaymentHistorySuccess(response.data));
+  } catch (error: any) {
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      'Error al obtener historial';
+    yield put(fetchPaymentHistoryFailure(message));
+  }
+}
+
 export function* watchPayment() {
   yield takeLatest(processPayment.type, processPaymentSaga);
+  yield takeLatest(pollPaymentStatus.type, pollPaymentStatusSaga);
+  yield takeLatest(fetchPaymentHistory.type, fetchPaymentHistorySaga);
 }

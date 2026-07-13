@@ -34,18 +34,21 @@ export class PaymentsService {
   }
 
   async create(dto: CreatePaymentDto) {
-    const product = await this.productRepo.findOneBy({ id: dto.product_id });
-    if (!product) {
-      throw new NotFoundException(`Producto #${dto.product_id} no encontrado`);
-    }
-
-    if (!product.is_active) {
-      throw new BadRequestException('El producto no esta disponible');
-    }
-
-    if (product.stock <= 0) {
-      throw new BadRequestException('Sin stock disponible');
-    }
+    const products = await Promise.all(
+      dto.items.map(async (item) => {
+        const product = await this.productRepo.findOneBy({ id: item.product_id });
+        if (!product) {
+          throw new NotFoundException(`Producto #${item.product_id} no encontrado`);
+        }
+        if (!product.is_active) {
+          throw new BadRequestException(`Producto #${item.product_id} no esta disponible`);
+        }
+        if (product.stock < item.quantity) {
+          throw new BadRequestException(`Stock insuficiente para ${product.name}`);
+        }
+        return { product, quantity: item.quantity };
+      }),
+    );
 
     const reference = dto.reference || `ref_${Date.now()}`;
 
@@ -54,13 +57,22 @@ export class PaymentsService {
       throw new BadRequestException('La referencia ya existe');
     }
 
+    const totalAmount = products.reduce(
+      (sum, { product, quantity }) => sum + product.price * quantity,
+      0,
+    );
+
+    const productNames = products.map(({ product }) => product.name).join(', ');
+    const productQuantities = products.map(({ quantity }) => quantity);
+
     const payment = this.paymentRepo.create({
       reference,
-      amount_in_cents: product.price * 100,
+      amount_in_cents: totalAmount * 100,
       currency: 'COP',
       customer_email: dto.customer_email,
-      product_id: product.id,
-      product_name: product.name,
+      product_id: products[0].product.id,
+      product_name: productNames,
+      product_quantity: productQuantities,
       status: PaymentStatus.PENDING,
     });
 
@@ -91,11 +103,108 @@ export class PaymentsService {
     return savedPayment;
   }
 
+  async findAll() {
+    return this.paymentRepo.find({
+      order: { created_at: 'DESC' },
+    });
+  }
+
+  async refreshPendingPayments() {
+    const pendingPayments = await this.paymentRepo.find({
+      where: { status: PaymentStatus.PENDING },
+    });
+
+    const results = await Promise.all(
+      pendingPayments.map(async (payment) => {
+        if (payment.wompi_transaction_id) {
+          try {
+            const response = await fetch(
+              `${this.wompiApiUrl}/transactions/${payment.wompi_transaction_id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${this.wompiPrivateKey}`,
+                },
+              },
+            );
+            if (response.ok) {
+              const data = await response.json();
+              const wompiStatus = data?.data?.status;
+              if (wompiStatus) {
+                const newStatus = this.mapWompiStatus(wompiStatus);
+                if (newStatus !== payment.status) {
+                  payment.status = newStatus;
+                  payment.response_data = data;
+                  if (newStatus === PaymentStatus.APPROVED) {
+                    const product = await this.productRepo.findOneBy({
+                      id: payment.product_id || undefined,
+                    });
+                    if (product && product.stock > 0) {
+                      product.stock -= 1;
+                      await this.productRepo.save(product);
+                    }
+                  }
+                  await this.paymentRepo.save(payment);
+                }
+              }
+            }
+          } catch (error) {
+            this.logger.warn(
+              `Error consultando transaccion ${payment.wompi_transaction_id}`,
+              error,
+            );
+          }
+        }
+        return payment;
+      }),
+    );
+
+    return this.paymentRepo.find({
+      order: { created_at: 'DESC' },
+    });
+  }
+
   async findOne(id: number) {
     const payment = await this.paymentRepo.findOneBy({ id });
     if (!payment) {
       throw new NotFoundException(`Pago #${id} no encontrado`);
     }
+
+    if (payment.status === PaymentStatus.PENDING && payment.wompi_transaction_id) {
+      try {
+        const response = await fetch(
+          `${this.wompiApiUrl}/transactions/${payment.wompi_transaction_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.wompiPrivateKey}`,
+            },
+          },
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const wompiStatus = data?.data?.status;
+          if (wompiStatus) {
+            const newStatus = this.mapWompiStatus(wompiStatus);
+            if (newStatus !== payment.status) {
+              payment.status = newStatus;
+              payment.response_data = data;
+              if (newStatus === PaymentStatus.APPROVED) {
+                const product = await this.productRepo.findOneBy({
+                  id: payment.product_id || undefined,
+                });
+                if (product && product.stock > 0) {
+                  product.stock -= 1;
+                  await this.productRepo.save(product);
+                }
+              }
+              await this.paymentRepo.save(payment);
+            }
+          }
+        }
+      } catch (error) {
+        this.logger.warn('Error consultando estado en Wompi', error);
+      }
+    }
+
     return payment;
   }
 
@@ -108,10 +217,20 @@ export class PaymentsService {
   }
 
   async handleWebhook(signature: string, events: any[]) {
+    this.logger.log(`Webhook recibido: ${events.length} eventos`);
+
+    const isValidSignature = await this.validateWebhookSignature(events, signature);
+    if (!isValidSignature) {
+      this.logger.warn('Firma del webhook invalida');
+      throw new BadRequestException('Firma del webhook invalida');
+    }
+
     for (const event of events) {
+      this.logger.log(`Evento: ${event.event}`);
       if (event.event === 'transaction.updated') {
         const transaction = event.data?.transaction;
         if (transaction) {
+          this.logger.log(`Transaccion ${transaction.id}: ${transaction.status}`);
           await this.updateTransactionStatus(
             transaction.id.toString(),
             transaction.status,
@@ -119,6 +238,22 @@ export class PaymentsService {
         }
       }
     }
+  }
+
+  private async validateWebhookSignature(events: any[], receivedSignature: string): Promise<boolean> {
+    if (!receivedSignature) return false;
+
+    const eventsJson = JSON.stringify(events);
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(eventsJson);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const computedSignature = hashArray
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+
+    return computedSignature === receivedSignature;
   }
 
   private async updateTransactionStatus(
@@ -137,6 +272,7 @@ export class PaymentsService {
     }
 
     const newStatus = this.mapWompiStatus(status);
+    this.logger.log(`Actualizando pago ${payment.id}: ${payment.status} → ${newStatus}`);
     payment.status = newStatus;
 
     if (newStatus === PaymentStatus.APPROVED) {

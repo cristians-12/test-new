@@ -5,10 +5,26 @@ import RootStack from '../../navigation/RootStack';
 import { navigationRef } from '../../navigation/navigationRef';
 import { colors } from '../../utils/colors';
 import { fontFamilies } from '../../utils/fonts';
+import { usePayment } from '../../hooks';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigation } from '../../types/navigation';
+
+function PaymentListener() {
+    const navigation = useNavigation<StackNavigation>();
+    usePayment({
+        onApproved: () => {
+            setTimeout(() => {
+                navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+            }, 1500);
+        },
+    });
+    return null;
+}
 
 export default function AppContent() {
     return (
         <NavigationContainer ref={navigationRef} theme={DefaultTheme}>
+            <PaymentListener />
             <RootStack />
             <Toast
                 ref={(ref) => {

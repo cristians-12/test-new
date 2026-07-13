@@ -37,6 +37,9 @@ export default function CustomBottomTab({
             case 'CartTab':
               iconName = isFocused ? 'cart' : 'cart-outline';
               break;
+            case 'PaymentHistoryTab':
+              iconName = isFocused ? 'time' : 'time-outline';
+              break;
             default:
               iconName = isFocused ? 'home' : 'home-outline';
               break;
