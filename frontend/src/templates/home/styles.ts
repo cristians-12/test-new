@@ -10,5 +10,9 @@ export const styles = StyleSheet.create({
     productContainer: {
         flex: 1,
         marginBottom: 20
+    },
+    categoriesContainer: {
+        paddingHorizontal: 16,
+        paddingVertical: 10,
     }
 });
