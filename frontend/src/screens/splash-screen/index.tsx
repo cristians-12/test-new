@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { styles } from './styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import SplashAnimation from '../../components/templates/splash-animation';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/navigation';
+import { SplashAnimation } from '../../templates';
 
 type SplashProps = NativeStackScreenProps<RootStackParamList, 'Splash'>;
 
