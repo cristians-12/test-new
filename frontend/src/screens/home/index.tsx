@@ -1,7 +1,11 @@
+import { Text, View } from "react-native";
+import HomeTemplate from "../../components/templates/home";
+import { styles } from "./styles";
+
 export default function HomeScreen() {
     return (
-        <div>
-            <h1>Home</h1>
-        </div>
+        <View style={styles.container}>
+            <HomeTemplate />
+        </View>
     );
 }

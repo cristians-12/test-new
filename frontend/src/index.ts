@@ -3,7 +3,7 @@ export * from './screens';
 export * from './navigation';
 export * from './hooks';
 export * from './services';
-export * from './store';
+export * from './store/store';
 export * from './utils';
 export * from './types';
 export * from './theme';

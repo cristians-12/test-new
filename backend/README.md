@@ -1,98 +1,76 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Backend - Test Results
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Test Summary
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+| Metric | Result |
+|---|---|
+| Test Suites | 11 passed, 11 total |
+| Tests | **105 passed**, 105 total |
+| Coverage (Statements) | **94.3%** |
+| Coverage (Branches) | **81.41%** |
+| Coverage (Functions) | **92.59%** |
+| Coverage (Lines) | **95.96%** |
 
-## Description
+## Coverage Report
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ pnpm install
+```
+---------------------------|---------|----------|---------|---------|-----------------------------------
+File                       | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                 
+---------------------------|---------|----------|---------|---------|-----------------------------------
+All files                  |    94.3 |    81.41 |   92.59 |   95.96 |                                   
+ src                       |     100 |       75 |     100 |     100 |                                   
+  app.controller.ts        |     100 |       75 |     100 |     100 | 6                                 
+  app.service.ts           |     100 |      100 |     100 |     100 |                                   
+ src/categories            |   95.31 |    84.37 |   86.66 |   98.21 |                                   
+  categories.controller.ts |     100 |       75 |     100 |     100 | 17-35                             
+  categories.service.ts    |     100 |    93.75 |     100 |     100 | 12                                
+  category.entity.ts       |    78.57 |       75 |        0 |      90 | 24                                
+ src/categories/dto        |     100 |      100 |     100 |     100 |                                   
+  create-category.dto.ts   |     100 |      100 |     100 |     100 |                                   
+  update-category.dto.ts   |     100 |      100 |     100 |     100 |                                   
+ src/payments              |    91.72 |    78.94 |     100 |    91.33 |                                   
+  payment.entity.ts        |     100 |       80 |     100 |     100 | 53-56                             
+  payments.controller.ts   |     100 |       75 |     100 |     100 | 16-19                             
+  payments.service.ts      |    88.65 |    79.31 |     100 |    88.42 | 85-88,133-136,210-211,244-245,260 
+ src/payments/dto          |     100 |      100 |     100 |     100 |                                   
+  create-payment.dto.ts    |     100 |      100 |     100 |     100 |                                   
+  webhook.dto.ts           |     100 |      100 |     100 |     100 |                                   
+ src/products              |     92.1 |    84.09 |    85.71 |    98.46 |                                   
+  product.entity.ts        |    72.72 |    83.33 |        0 |    93.33 | 32                                
+  products.controller.ts   |     100 |       75 |     100 |     100 | 19-37                             
+  products.service.ts      |     100 |    93.75 |     100 |     100 | 13                                
+ src/products/dto          |     100 |      100 |     100 |     100 |                                   
+  create-product.dto.ts    |     100 |      100 |     100 |     100 |                                   
+  query-product.dto.ts     |     100 |      100 |     100 |     100 |                                   
+  update-product.dto.ts    |     100 |      100 |     100 |     100 |                                   
+---------------------------|---------|----------|---------|---------|-----------------------------------
 ```
 
-## Compile and run the project
+## Test Files
+
+| File | Tests | Description |
+|---|---|---|
+| `src/app.controller.spec.ts` | 1 | Root controller - getHello |
+| `src/app.service.spec.ts` | 2 | Root service - getHello |
+| `src/products/products.service.spec.ts` | 12 | CRUD + filtering by category_id/search/price + pagination + error handling |
+| `src/products/products.controller.spec.ts` | 6 | All 5 endpoints delegation to service |
+| `src/products/dto/dto.spec.ts` | 24 | Validation rules for Create, Update and Query Product DTOs |
+| `src/categories/categories.service.spec.ts` | 12 | CRUD + slug uniqueness + conflict detection + error handling |
+| `src/categories/categories.controller.spec.ts` | 6 | All 5 endpoints delegation to service |
+| `src/categories/dto/category-dto.spec.ts` | 13 | Validation rules for Create and Update Category DTOs |
+| `src/payments/payments.service.spec.ts` | 18 | CRUD + webhook handling + status mapping + error handling |
+| `src/payments/payments.controller.spec.ts` | 3 | All 3 endpoints delegation to service |
+| `src/payments/dto/dto.spec.ts` | 10 | Validation rules for CreatePayment and Webhook DTOs |
+
+## How to Run
 
 ```bash
-# development
-$ pnpm run start
+# Run all tests
+pnpm test
 
-# watch mode
-$ pnpm run start:dev
+# Run tests with coverage report
+pnpm test:cov
 
-# production mode
-$ pnpm run start:prod
+# Run tests in watch mode
+pnpm test:watch
 ```
-
-## Run tests
-
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
