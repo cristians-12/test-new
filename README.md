@@ -1,12 +1,12 @@
-# E-Commerce Mobile App — Credit Card Payment Checkout
+# E-Commerce Móvil — Checkout de Pago con Tarjeta de Crédito
 
-Full-stack e-commerce application built with **React Native (Expo)** and **NestJS**, featuring a complete credit card payment checkout flow integrated with the **Wompi** payment gateway (sandbox mode).
+Aplicación full-stack de comercio electrónico construida con **React Native CLI** y **NestJS**, con un flujo completo de pago con tarjeta de crédito integrado con la pasarela de pagos **Wompi** (modo sandbox).
 
 ---
 
 ## APK
 
-The compiled Android APK is located at:
+La APK compilada de Android se encuentra en:
 
 ```
 frontend\android\app\build\outputs\apk\release\app-release.apk
@@ -14,51 +14,51 @@ frontend\android\app\build\outputs\apk\release\app-release.apk
 
 ---
 
-## Tech Stack
+## Stack Tecnológico
 
-| Layer    | Technology                                              |
-| -------- | ------------------------------------------------------- |
-| Mobile   | React Native 0.73, Redux Toolkit, Redux-Saga, Axios    |
-| Backend  | NestJS, TypeORM, PostgreSQL, Redis (cache), class-validator |
-| Payment  | Wompi Sandbox API                                       |
-| Infra    | Docker, Docker Compose                                  |
-| Tests    | Jest, Supertest, @testing-library/react-native          |
+| Capa      | Tecnología                                                          |
+| --------- | ------------------------------------------------------------------- |
+| Móvil     | React Native CLI 0.73, Redux Toolkit, Redux-Saga, Axios            |
+| Backend   | NestJS, TypeORM, PostgreSQL, Redis (caché), class-validator         |
+| Pagos     | Wompi Sandbox API                                                   |
+| Infra     | Docker, Docker Compose                                              |
+| Tests     | Jest, Supertest, @testing-library/react-native                      |
 
 ---
 
-## Project Structure
+## Estructura del Proyecto
 
 ```
-├── backend/                          # NestJS API
+├── backend/                          # API en NestJS
 │   ├── src/
-│   │   ├── domain/                   # Hexagonal Architecture — Domain layer
-│   │   │   ├── model/                #   Interfaces & enums (IProduct, IPayment, etc.)
-│   │   │   ├── dto/                  #   Data Transfer Objects with class-validator
-│   │   │   └── port/                 #   Ports (input use cases + output repositories)
-│   │   ├── application/              # Application layer — Services implementing use cases
-│   │   │   └── __tests__/            #   Unit tests for services
-│   │   ├── adapters/                 # Adapters layer
-│   │   │   ├── inbound/rest/         #   REST controllers (primary adapters)
-│   │   │   │   └── __tests__/        #   Controller unit tests
-│   │   │   └── outbound/             #   External adapters
-│   │   │       ├── persistence/typeorm/  # ORM entities + repository implementations
-│   │   │       └── external/wompi/       # Wompi API gateway
-│   │   ├── config/                   # Configuration modules (DB, Redis, Wompi)
-│   │   ├── modules/                  # NestJS feature modules
-│   │   └── main.ts                   # Application entry point
+│   │   ├── domain/                   # Arquitectura Hexagonal — Capa de dominio
+│   │   │   ├── model/                #   Interfaces y enums (IProduct, IPayment, etc.)
+│   │   │   ├── dto/                  #   Objetos de Transferencia de Datos con class-validator
+│   │   │   └── port/                 #   Puertos (casos de uso de entrada + repositorios de salida)
+│   │   ├── application/              # Capa de aplicación — Servicios que implementan casos de uso
+│   │   │   └── __tests__/            #   Tests unitarios de servicios
+│   │   ├── adapters/                 # Capa de adaptadores
+│   │   │   ├── inbound/rest/         #   Controladores REST (adaptadores primarios)
+│   │   │   │   └── __tests__/        #   Tests unitarios de controladores
+│   │   │   └── outbound/             #   Adaptadores externos
+│   │   │       ├── persistence/typeorm/  # Entidades ORM + implementaciones de repositorios
+│   │   │       └── external/wompi/       # Gateway de la API de Wompi
+│   │   ├── config/                   # Módulos de configuración (DB, Redis, Wompi)
+│   │   ├── modules/                  # Módulos feature de NestJS
+│   │   └── main.ts                   # Punto de entrada de la aplicación
 │   ├── Dockerfile
 │   └── package.json
-├── frontend/                         # React Native app
+├── frontend/                         # App en React Native CLI
 │   ├── src/
-│   │   ├── screens/                  # Screen components (Home, Cart, Payment, etc.)
-│   │   ├── templates/                # Template components (payment form, history)
-│   │   ├── components/               # Reusable UI components
+│   │   ├── screens/                  # Componentes de pantallas (Home, Carrito, Pago, etc.)
+│   │   ├── templates/                # Componentes de plantilla (formulario de pago, historial)
+│   │   ├── components/               # Componentes reutilizables de UI
 │   │   ├── store/                    # Redux Toolkit + Redux-Saga
-│   │   ├── hooks/                    # Custom hooks (usePayment, etc.)
-│   │   ├── navigation/               # React Navigation config
-│   │   ├── api/                      # Axios API client
-│   │   ├── assets/                   # Images (logos, placeholders)
-│   │   └── utils/                    # Helpers (validation, formatters)
+│   │   ├── hooks/                    # Hooks personalizados (usePayment, etc.)
+│   │   ├── navigation/               # Configuración de React Navigation
+│   │   ├── api/                      # Cliente API con Axios
+│   │   ├── assets/                   # Imágenes (logos, placeholders)
+│   │   └── utils/                    # Helpers (validación, formateo)
 │   └── package.json
 ├── docker-compose.yml                # PostgreSQL + Redis + Backend
 ├── .env.example
@@ -67,101 +67,101 @@ frontend\android\app\build\outputs\apk\release\app-release.apk
 
 ---
 
-## Backend API
+## API Backend
 
 ### Endpoints
 
-| Method   | Endpoint              | Description                   |
-| -------- | --------------------- | ----------------------------- |
-| `GET`    | `/api/products`       | List all products (with cache) |
-| `GET`    | `/api/products/:id`   | Get product by ID             |
-| `POST`   | `/api/products`       | Create product                |
-| `PUT`    | `/api/products/:id`   | Update product                |
-| `DELETE` | `/api/products/:id`   | Delete product                |
-| `GET`    | `/api/categories`     | List all categories           |
-| `GET`    | `/api/categories/:id` | Get category by ID            |
-| `POST`   | `/api/categories`     | Create category               |
-| `PUT`    | `/api/categories/:id` | Update category               |
-| `DELETE` | `/api/categories/:id` | Delete category               |
-| `POST`   | `/api/payments`       | Create payment (Wompi)        |
-| `GET`    | `/api/payments`       | List all payments             |
-| `GET`    | `/api/payments/:id`   | Get payment by ID             |
-| `POST`   | `/api/payments/refresh` | Refresh pending payments     |
-| `POST`   | `/api/payments/webhook` | Wompi webhook handler        |
+| Método   | Ruta                   | Descripción                            |
+| -------- | ---------------------- | -------------------------------------- |
+| `GET`    | `/api/products`        | Listar todos los productos (con caché) |
+| `GET`    | `/api/products/:id`    | Obtener producto por ID                |
+| `POST`   | `/api/products`        | Crear producto                         |
+| `PUT`    | `/api/products/:id`    | Actualizar producto                    |
+| `DELETE` | `/api/products/:id`    | Eliminar producto                      |
+| `GET`    | `/api/categories`      | Listar todas las categorías            |
+| `GET`    | `/api/categories/:id`  | Obtener categoría por ID               |
+| `POST`   | `/api/categories`      | Crear categoría                        |
+| `PUT`    | `/api/categories/:id`  | Actualizar categoría                   |
+| `DELETE` | `/api/categories/:id`  | Eliminar categoría                     |
+| `POST`   | `/api/payments`        | Crear pago (Wompi)                     |
+| `GET`    | `/api/payments`        | Listar todos los pagos                 |
+| `GET`    | `/api/payments/:id`    | Obtener pago por ID                    |
+| `POST`   | `/api/payments/refresh`| Actualizar pagos pendientes            |
+| `POST`   | `/api/payments/webhook`| Webhook de Wompi                       |
 
-### Architecture — Hexagonal (Ports & Adapters)
+### Arquitectura — Hexagonal (Puertos y Adaptadores)
 
-The backend follows **Hexagonal Architecture** to decouple the domain logic from external concerns:
+El backend sigue una **Arquitectura Hexagonal** para desacoplar la lógica de dominio de las preocupaciones externas:
 
-- **Domain** (`domain/`): Pure business interfaces, DTOs, and port definitions. No framework dependencies.
-- **Application** (`application/`): Services that implement use cases defined by input ports and depend on output ports.
-- **Adapters** (`adapters/`):
-  - *Inbound*: REST controllers that receive HTTP requests and delegate to use cases.
-  - *Outbound*: TypeORM repositories (database) and Wompi API gateway (external payment provider).
-- **Config** (`config/`): Infrastructure configuration (database, cache, Wompi keys).
-- **Modules** (`modules/`): NestJS feature modules wiring everything together.
+- **Dominio** (`domain/`): Interfaces puras de negocio, DTOs y definiciones de puertos. Sin dependencias de frameworks.
+- **Aplicación** (`application/`): Servicios que implementan los casos de uso definidos por los puertos de entrada y dependen de los puertos de salida.
+- **Adaptadores** (`adapters/`):
+  - *Entrada*: Controladores REST que reciben peticiones HTTP y delegan a los casos de uso.
+  - *Salida*: Repositorios con TypeORM (base de datos) y gateway de la API de Wompi (proveedor de pagos externo).
+- **Configuración** (`config/`): Configuración de infraestructura (base de datos, caché, claves de Wompi).
+- **Módulos** (`modules/`): Módulos feature de NestJS que ensamblan todo.
 
 ---
 
-## Local Development with Docker
+## Desarrollo Local con Docker
 
-### Prerequisites
+### Requisitos previos
 
-- [Docker](https://docs.docker.com/get-docker/) and Docker Compose
+- [Docker](https://docs.docker.com/get-docker/) y Docker Compose
 - Git
 
-### Steps
+### Pasos
 
-1. **Clone the repository**
+1. **Clonar el repositorio**
 
 ```bash
-git clone <repository-url>
-cd <project-folder>
+git clone <url-del-repositorio>
+cd <carpeta-del-proyecto>
 ```
 
-2. **Create your `.env` file**
+2. **Crear el archivo `.env`**
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` with your own values if needed. The default configuration works out of the box with Docker.
+Editar `.env` con tus propios valores si es necesario. La configuración por defecto funciona directamente con Docker.
 
-3. **Start all services**
+3. **Iniciar todos los servicios**
 
 ```bash
 docker-compose up --build
 ```
 
-This starts:
+Esto levanta:
 
-| Service    | Port  | Description                    |
-| ---------- | ----- | ------------------------------ |
-| `postgres` | 5432  | PostgreSQL 16 database         |
-| `redis`    | 6379  | Redis 7 cache                  |
-| `backend`  | 3000  | NestJS API server              |
+| Servicio   | Puerto | Descripción                    |
+| ---------- | ------ | ------------------------------ |
+| `postgres` | 5432   | Base de datos PostgreSQL 16    |
+| `redis`    | 6379   | Caché Redis 7                  |
+| `backend`  | 3000   | Servidor API NestJS            |
 
-4. **Seed the database**
+4. **Cargar datos de prueba (seed)**
 
-Once the backend is running:
+Una vez que el backend esté corriendo:
 
 ```bash
 docker exec -it test-backend pnpm seed
 ```
 
-5. **Access the API**
+5. **Acceder a la API**
 
 ```
 http://localhost:3000/api
 ```
 
-6. **Stop services**
+6. **Detener servicios**
 
 ```bash
 docker-compose down
 ```
 
-To remove volumes (fresh start):
+Para eliminar volúmenes (inicio limpio):
 
 ```bash
 docker-compose down -v
@@ -169,47 +169,47 @@ docker-compose down -v
 
 ---
 
-## Frontend Setup (React Native)
+## Configuración del Frontend (React Native CLI)
 
-### Prerequisites
+### Requisitos previos
 
 - Node.js >= 18
-- Android Studio (for Android emulator)
+- Android Studio (para el emulador de Android)
 - JDK 17
 
-### Steps
+### Pasos
 
-1. **Install dependencies**
+1. **Instalar dependencias**
 
 ```bash
 cd frontend
 npm install
 ```
 
-2. **Start Metro bundler**
+2. **Iniciar el bundler Metro**
 
 ```bash
 npm start
 ```
 
-3. **Run on Android emulator**
+3. **Ejecutar en el emulador de Android**
 
-Make sure an emulator is running, then:
+Asegúrese de que un emulador esté corriendo, luego:
 
 ```bash
 npm run android
 ```
 
-> The API client connects to `http://10.0.2.2:3000/api` by default, which maps to `localhost:3000` on the host machine from the Android emulator.
+> El cliente API se conecta a `http://10.0.2.2:3000/api` por defecto, que equivale a `localhost:3000` en la máquina host desde el emulador de Android.
 
-### Build APK
+### Compilar APK
 
 ```bash
 cd android
 ./gradlew assembleRelease
 ```
 
-The APK will be at:
+La APK quedará en:
 
 ```
 frontend/android/app/build/outputs/apk/release/app-release.apk
@@ -217,7 +217,7 @@ frontend/android/app/build/outputs/apk/release/app-release.apk
 
 ---
 
-## Unit Tests
+## Tests Unitarios
 
 ### Backend (96 tests)
 
@@ -226,19 +226,19 @@ cd backend
 pnpm test
 ```
 
-| Module          | Test file                                         | Tests |
-| --------------- | ------------------------------------------------- | ----- |
-| DTOs            | `domain/dto/__tests__/dto.spec.ts`                | 12    |
-| ProductService  | `application/__tests__/product.service.spec.ts`   | 14    |
-| CategoryService | `application/__tests__/category.service.spec.ts`  | 14    |
-| PaymentService  | `application/__tests__/payment.service.spec.ts`   | 14    |
-| ProductsCtrl    | `adapters/inbound/rest/__tests__/products.controller.spec.ts`  | 14    |
-| CategoriesCtrl  | `adapters/inbound/rest/__tests__/categories.controller.spec.ts` | 14    |
-| PaymentsCtrl    | `adapters/inbound/rest/__tests__/payments.controller.spec.ts`   | 14    |
-| AppController   | `app.controller.spec.ts`                          | 1     |
-| AppService      | `app.service.spec.ts`                             | 1     |
+| Módulo           | Archivo de test                                                        | Tests |
+| ---------------- | ---------------------------------------------------------------------- | ----- |
+| DTOs             | `domain/dto/__tests__/dto.spec.ts`                                     | 12    |
+| ProductService   | `application/__tests__/product.service.spec.ts`                        | 14    |
+| CategoryService  | `application/__tests__/category.service.spec.ts`                       | 14    |
+| PaymentService   | `application/__tests__/payment.service.spec.ts`                        | 14    |
+| ProductsCtrl     | `adapters/inbound/rest/__tests__/products.controller.spec.ts`          | 14    |
+| CategoriesCtrl   | `adapters/inbound/rest/__tests__/categories.controller.spec.ts`        | 14    |
+| PaymentsCtrl     | `adapters/inbound/rest/__tests__/payments.controller.spec.ts`          | 14    |
+| AppController    | `app.controller.spec.ts`                                               | 1     |
+| AppService       | `app.service.spec.ts`                                                  | 1     |
 
-**Total: 96 tests passing**
+**Total: 96 tests pasando**
 
 ### Frontend (189 tests)
 
@@ -247,46 +247,46 @@ cd frontend
 npm test
 ```
 
-| Module              | Tests |
-| ------------------- | ----- |
-| Payment saga        | 16    |
-| Payment reducer     | 22    |
-| Products saga       | 16    |
-| Products reducer    | 22    |
-| Categories saga     | 16    |
-| Categories reducer  | 22    |
-| Cart reducer        | 18    |
-| Cart persist        | 8     |
-| Card validation     | 25    |
-| Price formatter     | 12    |
-| App                 | 1     |
-| Other utilities     | 11    |
+| Módulo                | Tests |
+| --------------------- | ----- |
+| Payment saga          | 16    |
+| Payment reducer       | 22    |
+| Products saga         | 16    |
+| Products reducer      | 22    |
+| Categories saga       | 16    |
+| Categories reducer    | 22    |
+| Cart reducer          | 18    |
+| Cart persist          | 8     |
+| Validación de tarjeta | 25    |
+| Formateo de precio    | 12    |
+| App                   | 1     |
+| Otras utilidades      | 11    |
 
-**Total: 189 tests passing**
-
----
-
-## Mobile App — Payment Flow
-
-1. **Splash screen** — App loading screen
-2. **Home** — Product catalog with categories filter
-3. **Product detail** — View product info and add to cart
-4. **Cart** — Review selected products, adjust quantities
-5. **Payment form** — Enter credit card details (number, expiry, CVV, cardholder name)
-   - Real-time card brand detection (Visa / Mastercard)
-   - Card number formatting with spaces
-   - Luhn algorithm validation
-6. **Payment summary** — Review order before submitting
-7. **Payment status** — Confirmation/rejection screen after Wompi processing
-8. **Payment history** — View all previous payments with product details
+**Total: 189 tests pasando**
 
 ---
 
-## Wompi Integration (Sandbox)
+## App Móvil — Flujo de Pago
 
-All payments run in **sandbox mode** — no real money is charged.
+1. **Pantalla de splash** — Pantalla de carga de la aplicación
+2. **Inicio** — Catálogo de productos con filtro por categorías
+3. **Detalle del producto** — Ver información del producto y agregar al carrito
+4. **Carrito** — Revisar productos seleccionados, ajustar cantidades
+5. **Formulario de pago** — Ingresar datos de la tarjeta de crédito (número, vencimiento, CVV, nombre del titular)
+   - Detección en tiempo real de la marca de la tarjeta (Visa / Mastercard)
+   - Formateo del número de tarjeta con espacios
+   - Validación con algoritmo de Luhn
+6. **Resumen de pago** — Revisar el pedido antes de confirmar
+7. **Estado del pago** — Pantalla de confirmación/rechazo después del procesamiento de Wompi
+8. **Historial de pagos** — Ver todos los pagos anteriores con detalles de productos
 
-Default sandbox keys are provided in `docker-compose.yml`. To use your own keys, update the `WOMPI_*` variables in your `.env` file:
+---
+
+## Integración con Wompi (Sandbox)
+
+Todos los pagos se ejecutan en **modo sandbox** — no se cobra dinero real.
+
+Las claves sandbox por defecto se proporcionan en `docker-compose.yml`. Para usar tus propias claves, actualiza las variables `WOMPI_*` en tu archivo `.env`:
 
 ```
 WOMPI_API_URL=https://api-sandbox.co.uat.wompi.dev/v1
@@ -298,6 +298,6 @@ WOMPI_INTEGRITY_KEY=stagtest_integrity_xxx
 
 ---
 
-## License
+## Licencia
 
 UNLICENSED
