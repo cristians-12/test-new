@@ -8,7 +8,7 @@ export const PAYMENT_STATUS: Record<string, { icon: string; title: string; subti
   PENDING: {
     icon: '⏳',
     title: 'Pago pendiente',
-    subtitle: 'Tu transacción está siendo procesada.',
+    subtitle: 'Tu transacción está siendo procesada, mantente en esta pantalla para saber si se ha completado.',
     display: 'Pendiente',
   },
   DECLINED: {
