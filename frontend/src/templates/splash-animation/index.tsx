@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { Image, Text, View } from 'react-native';
 import { styles } from './styles';
-import ImageComponent from '../../molecules/image-component';
-import { images } from '../../../assets';
+import ImageComponent from '../../components/molecules/image-component';
+import { images } from '../../assets';
 
 
 
