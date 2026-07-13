@@ -10,8 +10,8 @@ import {
   Inject,
 } from '@nestjs/common';
 import type { ICategoryUseCase } from '../../../domain/port/input/category.port';
-import type { CreateCategoryDto } from '../../../domain/dto/create-category.dto';
-import type { UpdateCategoryDto } from '../../../domain/dto/update-category.dto';
+import { CreateCategoryDto } from '../../../domain/dto/create-category.dto';
+import { UpdateCategoryDto } from '../../../domain/dto/update-category.dto';
 
 @Controller('categories')
 export class CategoriesController {

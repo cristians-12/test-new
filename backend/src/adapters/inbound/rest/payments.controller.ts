@@ -10,7 +10,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import type { IPaymentUseCase } from '../../../domain/port/input/payment.port';
-import type { CreatePaymentDto } from '../../../domain/dto/create-payment.dto';
+import { CreatePaymentDto } from '../../../domain/dto/create-payment.dto';
 
 @Controller('payments')
 export class PaymentsController {
