@@ -75,13 +75,14 @@ export default function ProductDetailTemplate({ id }: Props) {
             id: String(productId),
             name,
             price,
+            stock,
             image: image_url ?? undefined,
           }))}
           style={isInCart ? styles.buttonAdded : styles.buttonSecondary}
           titleStyle={styles.titlebtn}
           icon={isInCart ? 'checkmark-outline' : 'cart-outline'}
           iconColor="white"
-          disabled={isInCart}
+          disabled={isInCart || stock <= 0}
         />
       </View>
     </>

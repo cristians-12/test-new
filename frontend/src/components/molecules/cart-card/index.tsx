@@ -8,6 +8,7 @@ import { formatCurrencyPrice } from '../../../utils';
 import { styles } from './styles';
 import ImageComponent from '../image-component';
 import { images } from '../../../assets';
+import { useToast } from 'react-native-toast-notifications';
 
 interface Props {
     item: CartItem;
@@ -15,8 +16,14 @@ interface Props {
 
 export default function CartCard({ item }: Props) {
     const dispatch = useAppDispatch();
+    const toast = useToast();
+    const atMaxStock = item.quantity >= item.stock;
 
     const handleIncrease = () => {
+        if (atMaxStock) {
+            toast.show('Ya no hay stock disponible', { type: 'warning' });
+            return;
+        };
         dispatch(updateQuantity({ id: item.id, quantity: item.quantity + 1 }));
     };
 
@@ -46,8 +53,8 @@ export default function CartCard({ item }: Props) {
                         <Ionicons name="remove" size={16} color="#fff" />
                     </TouchableOpacity>
                     <Text style={styles.quantity}>{item.quantity}</Text>
-                    <TouchableOpacity onPress={handleIncrease} style={styles.quantityButton}>
-                        <Ionicons name="add" size={16} color="#fff" />
+                    <TouchableOpacity onPress={handleIncrease} style={styles.quantityButton} disabled={atMaxStock}>
+                        <Ionicons name="add" size={16} color={atMaxStock ? '#666' : '#fff'} />
                     </TouchableOpacity>
                 </View>
             </View>

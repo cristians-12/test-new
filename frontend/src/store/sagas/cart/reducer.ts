@@ -5,6 +5,7 @@ export interface CartItem {
   name: string;
   price: number;
   quantity: number;
+  stock: number;
   image?: string;
 }
 
@@ -27,7 +28,9 @@ const cartSlice = createSlice({
     addItem(state, action: PayloadAction<Omit<CartItem, 'quantity'>>) {
       const existing = state.items.find((item) => item.id === action.payload.id);
       if (existing) {
-        existing.quantity += 1;
+        if (existing.quantity < existing.stock) {
+          existing.quantity += 1;
+        }
       } else {
         state.items.push({ ...action.payload, quantity: 1 });
       }
@@ -38,7 +41,7 @@ const cartSlice = createSlice({
     updateQuantity(state, action: PayloadAction<{ id: string; quantity: number }>) {
       const item = state.items.find((item) => item.id === action.payload.id);
       if (item) {
-        item.quantity = action.payload.quantity;
+        item.quantity = Math.min(action.payload.quantity, item.stock);
       }
     },
     clearCart(state) {
