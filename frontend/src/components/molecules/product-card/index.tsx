@@ -34,6 +34,7 @@ export default function ProductCard({ product }: Props) {
             id: String(id),
             name,
             price,
+            stock,
             image: image_url ?? undefined
         }));
     };
