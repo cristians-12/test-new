@@ -14,6 +14,7 @@ const mockCartItem: CartItem = {
   name: 'Test Item',
   price: 10000,
   quantity: 1,
+  stock: 5,
   image: 'http://example.com/img.jpg',
 };
 
@@ -22,6 +23,7 @@ const mockCartItem2: CartItem = {
   name: 'Test Item 2',
   price: 20000,
   quantity: 2,
+  stock: 3,
 };
 
 const initialState = {
@@ -63,9 +65,21 @@ describe('Cart Reducer', () => {
   });
 
   it('should handle addItem - without image', () => {
-    const itemWithoutImage = { id: '3', name: 'No Image', price: 5000 };
+    const itemWithoutImage = { id: '3', name: 'No Image', price: 5000, stock: 10 };
     const state = cartReducer(initialState, addItem(itemWithoutImage));
-    expect(state.items[0]).toEqual({ id: '3', name: 'No Image', price: 5000, quantity: 1 });
+    expect(state.items[0]).toEqual({ id: '3', name: 'No Image', price: 5000, stock: 10, quantity: 1 });
+  });
+
+  it('should not increment quantity beyond stock', () => {
+    const stateWithItem = { ...initialState, items: [{ ...mockCartItem, quantity: 5, stock: 5 }] };
+    const state = cartReducer(stateWithItem, addItem(mockCartItem));
+    expect(state.items[0].quantity).toBe(5);
+  });
+
+  it('should add new item even when stock is 1', () => {
+    const state = cartReducer(initialState, addItem({ ...mockCartItem, stock: 1 }));
+    expect(state.items).toHaveLength(1);
+    expect(state.items[0].quantity).toBe(1);
   });
 
   it('should handle removeItem', () => {
@@ -107,6 +121,12 @@ describe('Cart Reducer', () => {
     const stateWithItems = { ...initialState, items: [{ ...mockCartItem, quantity: 3 }] };
     const state = cartReducer(stateWithItems, updateQuantity({ id: '1', quantity: 0 }));
     expect(state.items[0].quantity).toBe(0);
+  });
+
+  it('should cap updateQuantity at stock limit', () => {
+    const stateWithItems = { ...initialState, items: [{ ...mockCartItem, quantity: 2, stock: 5 }] };
+    const state = cartReducer(stateWithItems, updateQuantity({ id: '1', quantity: 10 }));
+    expect(state.items[0].quantity).toBe(5);
   });
 
   it('should handle clearCart', () => {
