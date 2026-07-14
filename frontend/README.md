@@ -5,11 +5,11 @@
 | Metric | Result |
 |---|---|
 | Test Suites | 10 passed, 10 total |
-| Tests | **176 passed**, 176 total |
-| Coverage (Statements) | **99.5%** |
-| Coverage (Branches) | **95.55%** |
-| Coverage (Functions) | **98.63%** |
-| Coverage (Lines) | **99.47%** |
+| Tests | **189 passed**, 189 total |
+| Coverage (Statements) | **99.54%** |
+| Coverage (Branches) | **96.15%** |
+| Coverage (Functions) | **97.53%** |
+| Coverage (Lines) | **99.53%** |
 
 ## Coverage Report
 
@@ -17,7 +17,7 @@
 ----------------------------|---------|----------|---------|---------|-------------------
 File                        | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 ----------------------------|---------|----------|---------|---------|-------------------
-All files                   |    99.5 |    95.55 |   98.63 |   99.47 |
+All files                   |   99.54 |    96.15 |   97.53 |   99.53 |
  store/middleware           |     100 |      100 |     100 |     100 |
   cartPersist.ts            |     100 |      100 |     100 |     100 |
  store/sagas/cart           |     100 |      100 |     100 |     100 |
@@ -25,8 +25,8 @@ All files                   |    99.5 |    95.55 |   98.63 |   99.47 |
  store/sagas/categories     |     100 |      100 |     100 |     100 |
   reducer.ts                |     100 |      100 |     100 |     100 |
   saga.ts                   |     100 |      100 |     100 |     100 |
- store/sagas/payment        |     100 |      100 |     100 |     100 |
-  reducer.ts                |     100 |      100 |     100 |     100 |
+ store/sagas/payment        |     100 |      100 |   92.85 |     100 |
+  reducer.ts                |     100 |      100 |      90 |     100 |
   saga.ts                   |     100 |      100 |     100 |     100 |
  store/sagas/products       |     100 |      100 |     100 |     100 |
   reducer.ts                |     100 |      100 |     100 |     100 |
@@ -44,25 +44,25 @@ All files                   |    99.5 |    95.55 |   98.63 |   99.47 |
 | `store/sagas/cart/__tests__/reducer.test.ts` | 8 | addItem, removeItem, updateQuantity, clearCart, syncCart |
 | `store/sagas/products/__tests__/reducer.test.ts` | 16 | CRUD state transitions, filters, selected product |
 | `store/sagas/categories/__tests__/reducer.test.ts` | 16 | CRUD state transitions, selected category |
-| `store/sagas/payment/__tests__/reducer.test.ts` | 5 | processPayment, success, failure, clear, initial state |
+| `store/sagas/payment/__tests__/reducer.test.ts` | 14 | processPayment, success, failure, clear, pollPaymentStatusSuccess, fetchPaymentHistory (success/failure), payments array management |
 
 ### Sagas
 | File | Tests | Description |
 |---|---|---|
 | `store/sagas/products/__tests__/saga.test.ts` | 16 | All 5 CRUD sagas: call API + dispatch success/failure with error fallback messages |
 | `store/sagas/categories/__tests__/saga.test.ts` | 16 | All 5 CRUD sagas: call API + dispatch success/failure with error fallback messages |
-| `store/sagas/payment/__tests__/saga.test.ts` | 5 | POST /payments: success, network error, response error, default message, watcher |
+| `store/sagas/payment/__tests__/saga.test.ts` | 11 | processPayment, pollPaymentStatus, fetchPaymentHistory sagas + watcher (3 takeLatest) |
 
 ### Middleware
 | File | Tests | Description |
 |---|---|---|
-| `store/middleware/__tests__/cartPersist.test.ts` | 9 | Cart persistence: on add/remove/update/clear, skip unrelated, AsyncStorage errors, load from storage (empty, parse error, getItem error, empty string) |
+| `store/middleware/__tests__/cartPersist.test.ts` | 9 | Cart persistence: on add/remove/update/clear, skip unrelated, AsyncStorage errors, load from storage |
 
 ### Utilities
 | File | Tests | Description |
 |---|---|---|
 | `utils/functions/formatters/__tests__/formatPrice.test.ts` | 17 | formatCurrency + formatCurrencyPrice: thousand separators, empty/negative/spaces, edge cases |
-| `utils/validation/__tests__/cardUtils.test.ts` | 44 | detectCardType (VISA/MasterCard/unknown), luhnCheck (valid/invalid/spaces/hyphens/empty/letters), formatCardNumber, isValidEmail, isValidCVV, isValidExpiry, formatExpiry |
+| `utils/validation/__tests__/cardUtils.test.ts` | 44 | detectCardType (VISA/MasterCard/unknown), luhnCheck, formatCardNumber, isValidEmail, isValidCVV, isValidExpiry, formatExpiry |
 
 ## How to Run
 
